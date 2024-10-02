@@ -43,19 +43,21 @@ export default function Assignments() {
         
           <div className="wd-title p-3 ps-2 bg-secondary"><BsGripVertical className="me-2 fs-3" /><IoMdArrowDropdown className="me-2"/>ASSIGNMENTS<AssignmentsControlButtons /></div>
           <ul id="wd-assignment-list" className="wd-lessons list-group rounded-0">
-            <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" /><MdAssignmentAdd className="me-3 fs-3"/>
+
+
+            <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" style={{color:"green"}}/><MdAssignmentAdd className="me-3 fs-3" style={{color:"green"}}/>
               <a className="wd-assignment-link" href="#/Kanbas/Courses/1234/Assignments/123">A1</a><LessonControlButtons />
               <br />
               <p className="wd-assignment-info"><span style={{color:'red'}}>Multiple Modules</span> | <strong>Not available until</strong> May 6 at 12:00am | <strong>Due</strong> May 13 at 11:59pm | 100 pts</p>
             </li>
 
-            <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" /><MdAssignmentAdd className="me-3 fs-3"/>
+            <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" style={{color:"green"}}/><MdAssignmentAdd className="me-3 fs-3" style={{color:"green"}}/>
               <a className="wd-assignment-link" href="#/Kanbas/Courses/1234/Assignments/123">A2</a> <LessonControlButtons />
               <br />
               <p className="wd-assignment-info"><span style={{color:'red'}}>Multiple Modules</span> | <strong>Not available until</strong> May 13 at 12:00am | <strong>Due</strong> May 20 at 11:59pm | 100 pts</p>
             </li>
 
-            <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" /><MdAssignmentAdd className="me-3 fs-3"/>
+            <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" style={{color:"green"}}/><MdAssignmentAdd className="me-3 fs-3" style={{color:"green"}}/>
               <a className="wd-assignment-link" href="#/Kanbas/Courses/1234/Assignments/123">A3</a> <LessonControlButtons />
               <br />
               <p className="wd-assignment-info"><span style={{color:'red'}}>Multiple Modules</span> | <strong>Not available until</strong> May 20 at 12:00am | <strong>Due</strong> May 27 at 11:59pm | 100 pts</p>
