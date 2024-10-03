@@ -131,9 +131,11 @@ export default function AssignmentEditor() {
 
 
         </div>
+        
 
         <div className="row mt-5 mb-2">
           <div className="col">
+          <hr />
           <div className="col"><button className="btn btn-danger float-end rounded-1" type="submit">Save</button></div>
           <div className="col"><button className="btn btn-secondary float-end me-2 rounded-1" type="submit">Cancel</button></div>
         </div>
