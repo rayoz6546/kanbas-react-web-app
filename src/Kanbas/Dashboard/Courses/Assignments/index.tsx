@@ -6,13 +6,15 @@ import AssignmentsControlButtons from "./AssignmentsControlButtons";
 import { IoMdArrowDropdown } from "react-icons/io";
 import {  useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment} from "./reducer";
+import { deleteAssignment, setAssignments} from "./reducer";
 import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import AssignmentRemove from "./AssignmentRemove";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProtectedContent from "../../../Account/ProtectedContent";
 import ProtectedContentEnrollment from "../../../Account/ProtectedContentEnrollment";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "../Assignments/client"
 
 
 export default function Assignments() {
@@ -21,6 +23,22 @@ export default function Assignments() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [assignmentToDelete, setAssignmentToDelete] = useState("")
+
+
+    const fetchAssignments = async () => {
+      const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+      dispatch(setAssignments(assignments));
+    };
+    useEffect(() => {
+      fetchAssignments();
+    }, []);
+  
+    
+    const removeAssignment = async (assignmentId: string) => {
+      await assignmentsClient.deleteAssignment(assignmentId);
+      dispatch(deleteAssignment(assignmentId));
+    };
+
 
     return (
       
@@ -61,7 +79,7 @@ export default function Assignments() {
           <div className="wd-title p-3 ps-2 bg-secondary"><BsGripVertical className="me-2 fs-3" /><IoMdArrowDropdown className="me-2"/>ASSIGNMENTS<AssignmentsControlButtons /></div>
 
           {assignments
-          .filter((assignment: any) => assignment.course==cid)
+          // .filter((assignment: any) => assignment.course==cid)
           .map((assignment: any) =>(
             <ul id="wd-assignment-list" className="wd-lessons list-group rounded-0">
                 <li className="wd-assignment-list-item list-group-item p-3 ps-1"><BsGripVertical className="me-2 fs-3" style={{color:"green"}}/><MdAssignmentAdd className="me-3 fs-3" style={{color:"green"}}/>
@@ -75,7 +93,7 @@ export default function Assignments() {
               <AssignmentRemove
                 dialogTitle="Delete Assignment"
                 deleteAssignment={(id) => {
-                    dispatch(deleteAssignment(id));
+                    removeAssignment(id);
                     setAssignmentToDelete(""); 
                 }}
                 assignmentId={assignmentToDelete} 

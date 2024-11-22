@@ -6,17 +6,20 @@ import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
-import { addAssignment } from "./Assignments/reducer";
-import { useDebugValue } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import * as peopleClient from "../Courses/People/client"
 
 
 
-export default function Courses({ courses }: { courses: any[]; }) {
-  const { cid } = useParams();
-  const course = courses.find((course) => course._id === cid);
+export default function Courses({ courses }: { courses: any}) {
+
+
   const { pathname } = useLocation();
-  const dispatch = useDispatch;
+  const { cid } = useParams();
+  const course = courses.find((course:any) => course._id === cid);
+
+
+
     return (
       <div id="wd-courses">
         <h2 className="text-danger"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.name} &gt; {pathname.split("/")[4]}</h2>

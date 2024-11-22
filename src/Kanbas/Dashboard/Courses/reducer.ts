@@ -1,17 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { courses } from "../../Database";
-import {enroll} from "../Enrollment/reducer";
-import { useDispatch } from "react-redux";
+// import { courses } from "../../Database";
+
 
 const initialState = {
-    courses: courses,
+    courses: [],
+    // course: courses,
 };
+
 
 
 const coursesSlice = createSlice({
   name: "courses",
   initialState,
   reducers: {
+    setCourses: (state, action) => {
+      state.courses = action.payload;
+    },
+
     addNewCourse: (state, action) => {
 
         // const newCourse: any = {
@@ -23,7 +28,7 @@ const coursesSlice = createSlice({
     },
     deleteCourse:(state, action)=>{
         console.log('deleted course: ', action.payload.course)
-        state.courses = state.courses.filter(m => m._id !== action.payload.course) as any;
+        state.courses = state.courses.filter((m:any) => m._id !== action.payload.course) as any;
     },
 
 
@@ -34,5 +39,5 @@ const coursesSlice = createSlice({
     }
   },
 });
-export const { addNewCourse, deleteCourse,updateCourse } = coursesSlice.actions;
+export const { addNewCourse, deleteCourse,updateCourse, setCourses } = coursesSlice.actions;
 export default coursesSlice.reducer;
