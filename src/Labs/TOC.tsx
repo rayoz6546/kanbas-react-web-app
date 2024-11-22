@@ -72,7 +72,7 @@ export default function TOC() {
       </li>
       <li className="nav-item">
         <a id="wd-server-render" href="https://kanbas-node-server-app-rayan-483cc0025dfe.herokuapp.com/" className="nav-link">
-          Server Link Render
+          Heroku Link
         </a>
       </li>
     </ul>
