@@ -54,10 +54,10 @@ export default function Dashboard(
         />
         </ProtectedContent>
 
-        <ProtectedContentEnrollment>
-          <h5><button className="btn btn-primary float-end" onClick={toggleView}>Enrollments</button></h5>
+        {/* <ProtectedContentEnrollment> */}
+          <h5><button className="btn btn-primary float-end" onClick={toggleView}>{isEnrollmentView? "All Courses" : "My Courses"}</button></h5>
           
-        </ProtectedContentEnrollment>
+        {/* </ProtectedContentEnrollment> */}
 
 
 

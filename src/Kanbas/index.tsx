@@ -41,7 +41,8 @@ export default function Kanbas() {
 
   const fetchCourses = async () => {
     try {
-      const courses = await userClient.findMyCourses();   
+      const courses = await userClient.findCoursesForUser(currentUser._id); 
+ 
       const allCourses = await courseClient.fetchAllCourses()    // to render on screen when student clicks on "Enrollments"
       setAllCourses(allCourses);
       setCourses(courses)
@@ -63,14 +64,15 @@ export default function Kanbas() {
 
 
   const addNewCourse = async () => {
-    const newCourse = await userClient.createCourse(course);
+    // const newCourse = await userClient.createCourse(course);
+    const newCourse = await courseClient.createCourse(course);
   
     setCourses([ ...courses, newCourse ]);
     console.log(courses)
   };
   
   const deleteCourse = async (courseId: string) => {
-    const status = await courseClient.deleteCourse(courseId);
+   const status = await courseClient.deleteCourse(courseId);
  
     setCourses(courses.filter((course:any) => course._id !== courseId));
   };
@@ -86,14 +88,14 @@ export default function Kanbas() {
   
 
   const enrollCourse = async (courseId: string) => {
-    const c = await userClient.enrollUserInCourse(courseId);
+    const c = await userClient.enrollIntoCourse(currentUser._id, courseId);
     setCourses([ ...courses, c ]);
     fetchCourses();
 
   }
 
   const unErollCourse = async (courseId: string) => {
-    const status = await userClient.unEnrollUserFromCourse(courseId, currentUser._id)
+    const status = await userClient.unenrollFromCourse(currentUser._id, courseId);
     setCourses(courses.filter((course:any) => course._id !== courseId));
 
 
