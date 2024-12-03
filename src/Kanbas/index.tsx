@@ -39,12 +39,18 @@ export default function Kanbas() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
 
-  const fetchCourses = async () => {
+  const fetchAllCourses = async () => {
     try {
-      const courses = await userClient.findCoursesForUser(currentUser._id); 
- 
       const allCourses = await courseClient.fetchAllCourses()    // to render on screen when student clicks on "Enrollments"
       setAllCourses(allCourses);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchUserCourses = async () => {
+    try {
+      const courses = await userClient.findCoursesForUser(currentUser._id); 
       setCourses(courses)
     } catch (error) {
       console.error(error);
@@ -53,7 +59,12 @@ export default function Kanbas() {
 
 
   useEffect(() => {
-    fetchCourses();
+    fetchAllCourses();
+
+  }, []);
+
+  useEffect(() => {
+    fetchUserCourses();
 
   }, [currentUser]);
 
@@ -90,7 +101,8 @@ export default function Kanbas() {
   const enrollCourse = async (courseId: string) => {
     const c = await userClient.enrollIntoCourse(currentUser._id, courseId);
     setCourses([ ...courses, c ]);
-    fetchCourses();
+    fetchUserCourses();
+    fetchAllCourses();
 
   }
 
