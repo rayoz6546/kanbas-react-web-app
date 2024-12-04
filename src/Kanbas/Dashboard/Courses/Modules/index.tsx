@@ -50,15 +50,17 @@ export default function Modules() {
       const newModule = { name: moduleName, course: cid };
       const module = await coursesClient.createModuleForCourse(cid, newModule);
       dispatch(addModule(module));
+      fetchModules();
     };
   
     const removeModule = async (moduleId: string) => {
       await modulesClient.deleteModule(moduleId);
       dispatch(deleteModule(moduleId));
+      fetchModules();
     };
 
     const saveModule = async (module: any) => {
-      console.log(module)
+
       await modulesClient.updateModule(module);
       dispatch(updateModule(module));
     };
@@ -84,11 +86,12 @@ export default function Modules() {
               <BsGripVertical className="me-2 fs-3" />       {!module.editing && module.name}
       { module.editing && (
         <input className="form-control w-50 d-inline-block"
-               onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
+              onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
                onKeyDown={(e) => {
                  if (e.key === "Enter") {
-                  //  dispatch(updateModule({ ...module, editing: false }));
+                  dispatch(updateModule({ ...module, editing: false }));
                   saveModule({ ...module, editing: false });
+
                  }
                }}
                defaultValue={module.name}/>
