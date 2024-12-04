@@ -33,22 +33,6 @@ export const signout = async () => {
   };
   
 
-  
-
-  
-// export const enrollUserInCourse = async (course: any) => {
-
-//     const { data } = await axiosWithCredentials.put(`${USERS_API}/current/enrollments/${course}`);
-
-//     return data;
-//   };
-
-//   export const unEnrollUserFromCourse = async (courseId: any, userId:any) => {
-
-//     const { data } = await axiosWithCredentials.delete(`${USERS_API}/${userId}/enrollments/${courseId}`,{ data: { userId } });
-
-//     return data;
-//   };
 
 export const enrollIntoCourse = async (userId: string, courseId: string) => {
   const response = await axiosWithCredentials.post(`${USERS_API}/${userId}/courses/${courseId}`);
@@ -58,6 +42,11 @@ export const enrollIntoCourse = async (userId: string, courseId: string) => {
   const response = await axiosWithCredentials.delete(`${USERS_API}/${userId}/courses/${courseId}`);
   return response.data;
  };
+
+ export const unenrollAll = async (courseId: string) => {
+  const response = await axiosWithCredentials.delete(`${USERS_API}/All/courses/${courseId}`);
+  return response.data
+ }
  
 
   export const findAllUsers = async () => {

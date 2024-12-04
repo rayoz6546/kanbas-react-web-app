@@ -79,13 +79,16 @@ export default function Kanbas() {
     const newCourse = await courseClient.createCourse(course);
   
     setCourses([ ...courses, newCourse ]);
-    console.log(courses)
+    
+    enrollCourse(newCourse._id);
   };
   
   const deleteCourse = async (courseId: string) => {
    const status = await courseClient.deleteCourse(courseId);
  
     setCourses(courses.filter((course:any) => course._id !== courseId));
+    unEnrollAll(courseId);
+
   };
   
   
@@ -104,6 +107,12 @@ export default function Kanbas() {
     fetchUserCourses();
     fetchAllCourses();
 
+  }
+
+  const unEnrollAll = async (courseId:string) => {
+    const status = await userClient.unenrollAll(courseId);
+    setCourses(courses.filter((course:any) => course._id !== courseId));
+    fetchAllCourses();
   }
 
   const unErollCourse = async (courseId: string) => {

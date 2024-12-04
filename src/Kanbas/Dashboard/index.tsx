@@ -10,6 +10,7 @@ import * as userClient from "../Account/client";
 import * as courseClient from "./Courses/client";
 import { setCourses } from "./Courses/reducer";
 import { useState } from "react";
+import ProtectedContentAdmin from "../Account/ProtectedContentAdmin";
 
 
 export default function Dashboard(
@@ -54,10 +55,42 @@ export default function Dashboard(
         />
         </ProtectedContent>
 
-        {/* <ProtectedContentEnrollment> */}
+
+        <ProtectedContentAdmin>
+      <h5>New Course
+          <button className="btn btn-primary float-end"
+                  id="wd-add-new-course-click"
+                  onClick={()=>{
+                  const newCourse = { ...course, _id: new Date().getTime().toString(), image:"/images/react.jpg" };
+                  setCourse(newCourse);  addNewCourse()}}
+                  >
+                    Add </button>
+                    
+
+          <button className="btn btn-warning float-end me-2"
+                onClick={()=>updateCourse(course)} 
+                id="wd-update-course-click">
+          Update
+        </button>
+      </h5><br />
+      <input value={course.name} className="form-control mb-2"              
+        onChange={(e) => setCourse({ ...course, name: e.target.value }) }
+         />
+      
+      <textarea value={course.description} className="form-control"
+        onChange={(e) => setCourse({ ...course, description: e.target.value }) }
+        />
+        </ProtectedContentAdmin>
+
+        <ProtectedContentEnrollment>
           <h5><button className="btn btn-primary float-end" onClick={toggleView}>{isEnrollmentView? "All Courses" : "My Courses"}</button></h5>
           
-        {/* </ProtectedContentEnrollment> */}
+        </ProtectedContentEnrollment>
+
+        <ProtectedContent>
+          <h5><button className="btn btn-primary float-end" onClick={toggleView}>{isEnrollmentView? "All Courses" : "My Courses"}</button></h5>
+          
+        </ProtectedContent>
 
 
 
@@ -108,6 +141,26 @@ export default function Dashboard(
                         Edit
                       </button>
                       </ProtectedContent>
+                      
+
+                      <ProtectedContentAdmin>
+                      <button onClick={()=>{deleteCourse(course._id)}} 
+
+                              className="btn btn-danger float-end"
+                              id="wd-delete-course-click">
+                              Delete
+                              </button>
+
+                              <button id="wd-edit-course-click"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    setCourse(course);
+                                  }}
+
+                                  className="btn btn-warning me-2 float-end" >
+                                  Edit
+                                </button>
+                      </ProtectedContentAdmin>
                   </div>
                 
               </div>
