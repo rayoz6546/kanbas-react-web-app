@@ -5,15 +5,15 @@ import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
 import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GoGear } from "react-icons/go";
+import { FaGithub } from "react-icons/fa";
 
 export default function KanbasNavigation() {
   const { pathname } = useLocation();
   const links = [
     { label: "Dashboard", path: "/Kanbas/Dashboard", icon: AiOutlineDashboard },
     { label: "Courses",   path: "/Kanbas/Dashboard", icon: LiaBookSolid },
-    { label: "Calendar",  path: "/Kanbas/Calendar",  icon: IoCalendarOutline },
-    { label: "Inbox",     path: "/Kanbas/Inbox",     icon: FaInbox },
-    { label: "Labs",      path: "/Labs",             icon: LiaCogSolid },
+    { label: "Github Client",      path: "https://github.com/rayoz6546/CS-5610-Final-Project.git",             icon: FaGithub },
+    { label: "Github Server",      path: "https://github.com/rayoz6546/CS-5610-Final-Project-server.git",             icon: FaGithub },
   ];
 
   return (
@@ -22,19 +22,19 @@ export default function KanbasNavigation() {
       <a id="wd-neu-link" target="_blank" 
         href="https://www.northeastern.edu/"
         className="list-group-item bg-black border-0 text-center">
-        <img src="/images/NEU.png" width="75px" /></a>
+        <img src="/images/RayozWeb.png" width="100px" style={{position:"relative", left:"-5%"}}/></a>
 
         <Link to="/Kanbas/Account" className={`list-group-item text-center border-0 bg-black
-            ${pathname.includes("Account") ? "bg-white text-danger" : "bg-black text-white"}`}>
-        <FaRegCircleUser className={`fs-1 ${pathname.includes("Account") ? "text-danger" : "text-white"}`} />
+            ${pathname.includes("Account") ? "bg-white text-info" : "bg-black text-white"}`}>
+        <FaRegCircleUser className={`fs-1 ${pathname.includes("Account") ? "text-info" : "text-white"}`} />
         <br />
         Account
       </Link>
       
       {links.map((link) => (
         <Link key={link.path} to={link.path} className={`list-group-item bg-black text-center border-0
-              ${pathname.includes(link.label) ? "text-danger bg-white" : "text-white bg-black"}`}>
-          {link.icon({ className: "fs-1 text-danger"})}
+              ${pathname.includes(link.label) ? "text-info bg-white" : "text-white bg-black"}`}>
+          {link.icon({ className: "fs-1 text-info"})}
           <br />
           {link.label}
         </Link>

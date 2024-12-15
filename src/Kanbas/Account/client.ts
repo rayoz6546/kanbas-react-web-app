@@ -48,6 +48,7 @@ export const enrollIntoCourse = async (userId: string, courseId: string) => {
   return response.data
  }
  
+ 
 
   export const findAllUsers = async () => {
     const response = await axiosWithCredentials.get(USERS_API);

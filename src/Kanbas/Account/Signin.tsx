@@ -14,7 +14,6 @@ export default function Signin() {
     //   (u: any) => u.username === credentials.username && u.password === credentials.password);
     try {
     const user = await client.signin(credentials);
-    console.log(user)
     if (!user) return;
     dispatch(setCurrentUser(user));
     navigate("/Kanbas/Dashboard");}
