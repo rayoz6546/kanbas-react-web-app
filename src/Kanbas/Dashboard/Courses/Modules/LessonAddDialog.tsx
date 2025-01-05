@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import * as modulesClient from "./client";
 import * as filesClient from "../filesClient";
+import { addFile } from "../filesReducer";
 
 export default function AddLessonDialog({
   dialogTitle,
@@ -33,11 +34,14 @@ export default function AddLessonDialog({
 
       if (activeInput === "file" && lessonFile) {
         const fileUploadResponse = await filesClient.uploadFile(lessonFile, newLesson._id);
-        newLesson.file = fileUploadResponse.fileId; 
-        console.log("File uploaded successfully:", fileUploadResponse);
+        dispatch(addFile(fileUploadResponse));
+        const newerLesson = {...newLesson, file: fileUploadResponse.fileId}
+        await modulesClient.createLessonForModule(moduleId, newerLesson);
+        dispatch({ type: "modules/addLessonToModule", payload: { moduleId, lesson: newerLesson} });
       }
+      else {
       await modulesClient.createLessonForModule(moduleId, newLesson);
-      dispatch({ type: "modules/addLessonToModule", payload: { moduleId, lesson: newLesson} });
+      dispatch({ type: "modules/addLessonToModule", payload: { moduleId, lesson: newLesson} });}
 
 
 

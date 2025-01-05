@@ -28,7 +28,7 @@ export default function Modules({ collapsed, setCollapsed, allIconsVisible, setA
     const [moduleName, setModuleName] = useState("");
     const { isStudentView, toggleView } = useViewContext();
     const { modules } = useSelector((state: any) => state.modulesReducer);
-
+    const { files } = useSelector((state: any) => state.filesReducer);
 
 
     const dispatch = useDispatch();
@@ -183,7 +183,7 @@ export default function Modules({ collapsed, setCollapsed, allIconsVisible, setA
                       <FaRegFileAlt className="me-2 ms-2 fs-4" />
 
                       <a
-                        href={`${REMOTE_SERVER}/api/files/${lesson.file}`}
+                        href={`${REMOTE_SERVER}/api/files/${files.find((f:any)=> f.itemId === lesson._id)._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         download
