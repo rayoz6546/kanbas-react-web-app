@@ -109,7 +109,6 @@ export default function GradeStudent() {
         const updatedResult = {...result, score:score}
         await resultsClient.updateResults(updatedResult);
         dispatch(updateResults(updatedResult))
-       
 
     }
 
