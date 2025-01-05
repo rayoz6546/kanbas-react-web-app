@@ -183,7 +183,7 @@ export default function Modules({ collapsed, setCollapsed, allIconsVisible, setA
                       <FaRegFileAlt className="me-2 ms-2 fs-4" />
 
                       <a
-                        href={`${REMOTE_SERVER}/api/files/${files && files.find((f:any)=> f.itemId === lesson._id)._id}`}
+                        href={`${REMOTE_SERVER}/api/files/${files && files.find((f:any)=> f.itemId === lesson._id)._id && files.find((f:any)=> f.itemId === lesson._id)._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         download
@@ -268,7 +268,7 @@ export default function Modules({ collapsed, setCollapsed, allIconsVisible, setA
                     <li className="wd-lesson list-group-item p-3 ps-1">
                       <FaRegFileAlt className="me-2 ms-2 fs-4" />
                       <a
-                        href={`${REMOTE_SERVER}/api/files/${files && files.find((f:any)=> f.itemId === lesson._id)._id}`}
+                        href={`${REMOTE_SERVER}/api/files/${files && files.find((f:any)=> f.itemId === lesson._id)._id && files.find((f:any)=> f.itemId === lesson._id)._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         download
@@ -338,7 +338,7 @@ export default function Modules({ collapsed, setCollapsed, allIconsVisible, setA
                     <li className="wd-lesson list-group-item p-3 ps-1">
                       <FaRegFileAlt className="me-2 ms-2 fs-4" />
                       <a
-                        href={`${REMOTE_SERVER}/api/files/${files && files.find((f:any)=> f.itemId === lesson._id)._id}`}
+                        href={`${REMOTE_SERVER}/api/files/${files && files.find((f:any)=> f.itemId === lesson._id)._id && files.find((f:any)=> f.itemId === lesson._id)._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         download
