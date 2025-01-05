@@ -16,6 +16,11 @@ const RESULTS_API = `${REMOTE_SERVER}/api/results`;
     return response.data;
   }
 
+  export const fetchResultsByUser = async (courseId:string, userId:string)=> {
+    const response = await axios.get(`${RESULTS_API}/all/${courseId}/${userId}`);
+    return response.data;
+  }
+
   export const createResults = async (quizId: string, userId:any,result: any) => {
     const response = await axios.post(
       `${RESULTS_API}/${quizId}/${userId}`,

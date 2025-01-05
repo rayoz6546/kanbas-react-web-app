@@ -23,7 +23,7 @@ export default function Kanbas() {
   
   const [course, setCourse] = useState<any>({
     _id: new Date().getTime().toString(), name: "New Course", number: "New Number",
-    startDate: "2023-09-10", endDate: "2023-12-15",  image: "/images/react.jpg", description: "New Description",
+    startDate: "2023-09-10", endDate: "2023-12-15",  image: "/images/red.jpg", description: "New Description",
   });  
 
   const [courses, setCourses] = useState<any[]>([])   // this holds courses for current user

@@ -9,7 +9,7 @@ import CourseStatus from "./Home/Status";
 import PeopleTable from "./People/Table";
 import Quizzes from "./Quizzes";
 import QuizDetails from "./Quizzes/QuizDetails";
-import { ViewProvider } from "./Quizzes/View";
+import { useViewContext, ViewProvider } from "./Quizzes/View";
 import EditorNavigation from "./Quizzes/EditorNavigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,6 +21,14 @@ import * as coursesClient from "../Courses/client";
 import { setQuizzes } from "./Quizzes/quizzesReducer";
 import { setResults } from "./Quizzes/resultsReducer";
 import * as resultsClient from "./Quizzes/resultsClient";
+import Grades from "./Grades";
+import ModulesControls from "./Modules/ModulesControls";
+import ProtectedContent from "../../Account/ProtectedContent";
+import StudentViewButton from "./Quizzes/StudentViewButton";
+import TakeAssignment from "./Assignments/TakeAssignment";
+import GradeStudent from "./Grades/GradeStudent";
+import StudentQuizResults from "./Grades/studentQuizResults";
+import { assignments } from "../../Database";
 
 export default function Courses({ courses }: {
   courses: any[];
@@ -29,52 +37,83 @@ export default function Courses({ courses }: {
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
   const {quizzes} = useSelector((state: any) => state.quizzesReducer);
+  const {assignments} = useSelector((state: any) => state.assignmentsReducer);
+  const assignment = assignments.find((a:any)=>a._id===pathname.split("/")[5])
   const newQuizId = Date.now().toString()
   const dispatch = useDispatch()
-  // const [setPublished, setNewPublished] = useState(false)
+  const {modules} = useSelector((state: any) => state.modulesReducer);
+
+  const lessons = modules.reduce((allLessons: any[], module: any) => {
+    return [...allLessons, ...module.lessons];
+  }, []);
   
   const quiz = quizzes.find((q:any)=>q._id===pathname.split("/")[5])
 
-  // const {questions} = useSelector((state:any)=> state.questionsReducer)
-   
+  const [allIconsVisible, setAllIconsVisible] = useState(false);
+  const [visibleIcons, setVisibleIcons] = useState<Record<string, boolean>>({});
 
+  const toggleAllIcons = () => {
+    const allCurrentlyVisible = modules.every((module: any) => visibleIcons[module._id]) &&
+                                lessons.every((lesson: any) => visibleIcons[lesson._id]);
+  
+    const newVisibility = {
+      ...modules.reduce((acc: any, module: any) => {
+        acc[module._id] = !allCurrentlyVisible; // Toggle visibility for modules
+        return acc;
+      }, {}),
+      ...lessons.reduce((acc: any, lesson: any) => {
+        acc[lesson._id] = !allCurrentlyVisible; // Toggle visibility for lessons
+        return acc;
+      }, {}),
+    };
+  
+    setVisibleIcons(newVisibility);
+  };
+  
+
+const toggleIcons = (Id: string) => {
+    setVisibleIcons((prev) => ({
+        ...prev,
+        [Id]: !prev[Id],
+    }));
+};
+ 
   
   
-  // const fetchQuizzes = async () => {
-  //   const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
-  //   dispatch(setQuizzes(quizzes));
-  // };
-
-  // useEffect(() => {
-  //   fetchQuizzes();
-
-
-  // }, [cid, quizzes]);
-  
+  const [collapsed, setCollapsed] = useState(false);
   return (
+    
     <div id="wd-courses">
-      <h2 id="wd-course-title" className="text-danger"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.name} &gt; {pathname.split("/")[4]} &gt; {(quizzes) && (quiz) && quiz.title}</h2>
+      <h2 id="wd-course-title" className="text-primary"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.name} &gt; {pathname.split("/")[4]} &gt; {(quizzes) && (quiz) && quiz.title} {(assignments) && (assignment) && assignment.title}</h2>
+
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">
           <CoursesNavigation />
         </div>
+
         <div className="flex-fill">
           <ViewProvider>
             <Routes>
-              <Route path="Home" element={<Home />} />
-              <Route path="Modules" element={<Modules />} />
+              
+              <Route path="Home" element={<Home collapsed={collapsed} setCollapsed={setCollapsed} allIconsVisible={allIconsVisible} setAllIconsVisible={setAllIconsVisible} toggleAllIcons={toggleAllIcons} visibleIcons={visibleIcons} toggleIcons={toggleIcons}/>} />
+              <Route path="Modules" element={<Modules collapsed={collapsed} setCollapsed={setCollapsed} allIconsVisible={allIconsVisible} setAllIconsVisible={setAllIconsVisible} toggleAllIcons={toggleAllIcons} visibleIcons={visibleIcons} toggleIcons={toggleIcons}/>} />
               <Route path="Assignments" element={<Assignments />} />
-              <Route path="Assignments/:id" element={<AssignmentEditor />} />
+              <Route path="Assignments/:aid" element={<AssignmentEditor />} />
               <Route path="Assignments/new" element={<AssignmentEditor />} />
-              <Route path="Quizzes" element={<Quizzes newQuizId={newQuizId} quizzes={quizzes}/>} />
+              <Route path="Assignments/take/:aid" element={<TakeAssignment />} />
+              <Route path="Quizzes" element={<Quizzes newQuizId={newQuizId} quizzes={quizzes} />} />
               <Route path="Quizzes/:qid" element={<QuizDetails/>} />
               <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation newQuizId={newQuizId} quizzes={quizzes}/>} />
               <Route path="Quizzes/:qid/Preview/*" element={<QuizPreview/>} />
               <Route path="Quizzes/:qid/PreviewResults" element={<QuizPreviewResults />} />
               <Route path="Quizzes/:qid/TakeQuiz" element={<TakeQuiz />} />
               <Route path="Quizzes/:qid/QuizResults" element={<QuizResults />} />
+              <Route path="Grades" element={<Grades />} />
+              <Route path="Grades/:uid" element={<GradeStudent />} />
+              <Route path="Grades/:uid/:qid" element={<StudentQuizResults />} />
               <Route path="People" element={<PeopleTable />} />
+              
             </Routes>
           </ViewProvider>
         </div>

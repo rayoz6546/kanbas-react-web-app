@@ -8,6 +8,10 @@ export const findCoursesForUser = async (userId: string) => {
   return response.data;
 };
 
+export const findUsersForCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}/${courseId}/allUsersForCourse`);
+  return response.data;
+};
 
 export const signin = async (credentials: any) => {
   const response = await axiosWithCredentials.post( `${USERS_API}/signin`, credentials );

@@ -30,13 +30,5 @@ export default function Account() {
 
         </div>
 
-
-        <div className="mt-5">
-          <h3>Team Members (Team 106):</h3> 
-        </div>
-        <div>
-        Rayan Hassan (SEC 02), Nakul Rao (SEC 02), Vasant Tholappa (SEC 02)
-        </div>
-
       </div>
   );}

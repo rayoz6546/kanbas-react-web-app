@@ -20,6 +20,7 @@ import * as quizzesClient from "../Quizzes/client";
 import * as questionsClient from "../Quizzes/questionsClient";
 import { GrEdit } from "react-icons/gr";
 import * as resultsClient from "./resultsClient";
+import { BsGripVertical } from "react-icons/bs";
 
 export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any}) {
     const { cid } = useParams()
@@ -112,22 +113,23 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
 
     };
 
+    const [collapsed, setCollapsed] = useState(false);
+    const toggleCollapseAll = () => {
+        setCollapsed(!collapsed);
+      };    
+
     
     return (
         <>
             <ProtectedContent><StudentViewButton
                 isStudentView={isStudentView}
                 onClick={toggleView}
-            /></ProtectedContent>
+            />
 
             <div id="wd-quizzes" className="p-3">
                 <div className="row mb-5">
-                    <div className="col">
-                        <input type="search" className="form-control rounded-0 me-1 wd-search-bar" id="wd-search-assignment"
-                            placeholder="    Search for Quiz" style={{ width: "300px" }} />
-                    </div>
 
-                    <ProtectedContent>{isStudentView ?
+                {isStudentView ?
                         (<><div className="col mb-3">
 
                             <div className="col">
@@ -143,24 +145,33 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                     <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                                     Quizzes</button>
                             </div>
-                        </div> <hr /></>) : null}</ProtectedContent>
-                </div>
 
-
-                <div className="row">
+                            <div className="col">
+                                <button
+                                id="wd-collapse-all"
+                                className="btn btn-lg btn-secondary fs-6 me-1 float-end"
+                                onClick={toggleCollapseAll}
+                            >
+                                {collapsed ? "Uncollapse All" : "Collapse All"}
+                            </button>
+                            </div>
+                        </div> <hr />
+                        
+                        <div className="row">
 
                     <ul id="wd-quiz-list" className="list-group rounded-0">
-                        <li className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
-                            <div className="wd-assignments-title p-3 ps-2 bg-secondary">
-                                <IoMdArrowDropdown className="me-2 fs-5" />
-                                Assignment Quizzes
+                        <li className="wd-quiz list-group-item p-0 mb-5 fs-5 border-gray">
+                            <div className="wd-quizzes-title p-3 ps-2 bg-secondary">
+                                <BsGripVertical className="me-2 fs-3" /><IoMdArrowDropdown className="me-2 fs-5" />
+                                QUIZZES
                             </div>
-                            <ul className="wd-assignments list-group rounded-0">
-                            <ProtectedContent>{quizzes
+                            <ul className="wd-quizzes list-group rounded-0">
+                                {!collapsed && quizzes
                                     .filter((quiz: any) => quiz.course === cid)
                                     .map((quiz: any) => (
-                                        
-                                        <li className="wd-assignment list-group-item p-3 ps-1 d-flex align-items-center">
+                                        <>
+
+                                        <li className="wd-quizzes list-group-item p-3 ps-1 d-flex align-items-center">
                                             <div className="d-flex align-items-center">
                            
                                                 <IoRocketOutline className="ms-2 me-3 fs-3 text-success" />
@@ -193,7 +204,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                                 </div>
                                             </div>
 
-                                            {isStudentView ?
+                        
                                                 <div className="ms-auto d-flex align-items-center">
                                           
 
@@ -247,20 +258,132 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
 
 
  
-                                                </div> : null}
+                                                </div> 
                                         </li>
+                                        </>
                                     ))
-                                }</ProtectedContent>
+                                }
+
+                            </ul>
+                        </li >
+                    </ul>
+                </div> 
+                        </>
+                    ) : 
+
+                    <>
+
+                    <div className="col mb-3">
+                    <button
+                    id="wd-collapse-all"
+                    className="btn btn-lg btn-secondary fs-6 me-1 float-end"
+                    onClick={toggleCollapseAll}
+                    >
+                    {collapsed ? "Uncollapse All" : "Collapse All"}
+                    </button>
+                    </div> 
+                    <hr />
+
+                    <div className="row">
+
+                        <ul id="wd-quiz-list" className="list-group rounded-0">
+                            <li className="wd-quiz list-group-item p-0 mb-5 fs-5 border-gray">
+                                <div className="wd-quizzes-title p-3 ps-2 bg-secondary">
+                                <BsGripVertical className="me-2 fs-3" /><IoMdArrowDropdown className="me-2 fs-5" />
+                                    QUIZZES
+                                </div>
+                                <ul className="wd-quizzes list-group rounded-0">
+                                    {!collapsed && quizzes
+                                        .filter((quiz: any) => quiz.course === cid)
+                                        .map((quiz: any) => (
+                                            <>
+                                            {quiz.published && 
+                                            <li className="wd-quizzes list-group-item p-3 ps-1 d-flex align-items-center">
+                                                <div className="d-flex align-items-center">
+                            
+                                                    <IoRocketOutline className="ms-2 me-3 fs-3 text-success" />
+                                                    <div className={`wd-${quiz._id}`}>
+                                                        <a className="wd-quiz-link" href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
+                                                            <strong>{quiz.title}</strong>
+                                                        </a>
+                                                        <br />
+
+                                                        {(quiz.availability==="Closed") && ( <>
+                                                            <strong>Closed</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
+                                                            </>
+                                                        )}
+                                                        
+                                                        {(quiz.availability==="Available") && ( <>
+                                                            <strong>Available</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
+                                                            </>
+                                                        )}
+                                                        {(quiz.availability==="Not Available Until") && ( <>
+                                                            <strong>Not Available Until</strong> {`${quiz.available_until}`.toString().split("T")[0]} | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
+                                                            </>
+                                                        )}
+                                                        {(quiz.availability==="") && ( <>
+                                                            <strong>Undefined</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
+                                                            </>
+                                                        )}
+
+                                                        <br />
+                                                            
+                                                    </div>
+                                                </div>
 
 
-                        <ProtectedContentEnrollment>{quizzes
+                                            </li>}
+                                            </>
+                                        ))
+                                    }
+
+                                </ul>
+                            </li >
+                        </ul>
+                    </div> 
+
+                    </>
+                    }
+
+                </div>
+
+            </div>
+            </ProtectedContent>
+
+            
+            <ProtectedContentEnrollment>
+
+            <>
+            <div id="wd-quizzes" className="p-3">
+                <div className="row mb-5">
+                <div className="col mb-3">
+                <button
+                id="wd-collapse-all"
+                className="btn btn-lg btn-secondary fs-6 me-1 float-end"
+                onClick={toggleCollapseAll}
+                >
+                {collapsed ? "Uncollapse All" : "Collapse All"}
+                </button>
+                </div> 
+                <hr />
+
+                <div className="row">
+
+                    <ul id="wd-quiz-list" className="list-group rounded-0">
+                        <li className="wd-quiz list-group-item p-0 mb-5 fs-5 border-gray">
+                            <div className="wd-quizzes-title p-3 ps-2 bg-secondary">
+                            <BsGripVertical className="me-2 fs-3" /><IoMdArrowDropdown className="me-2 fs-5" />
+                                QUIZZES
+                            </div>
+                            <ul className="wd-quizzes list-group rounded-0">
+                                {!collapsed && quizzes
                                     .filter((quiz: any) => quiz.course === cid)
                                     .map((quiz: any) => (
                                         <>
-                          
-                                        {quiz.published && ( <li className="wd-assignment list-group-item p-3 ps-1 d-flex align-items-center">
+                                        {quiz.published && 
+                                        <li className="wd-quizzes list-group-item p-3 ps-1 d-flex align-items-center">
                                             <div className="d-flex align-items-center">
-
+                        
                                                 <IoRocketOutline className="ms-2 me-3 fs-3 text-success" />
                                                 <div className={`wd-${quiz._id}`}>
                                                     <a className="wd-quiz-link" href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
@@ -269,39 +392,47 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                                     <br />
 
                                                     {(quiz.availability==="Closed") && ( <>
-                                                        <strong>Closed</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {`${quiz.number_questions}`} Questions | Score: {scores[quiz._id]} / {quiz.points}
+                                                        <strong>Closed</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
                                                         </>
                                                     )}
                                                     
                                                     {(quiz.availability==="Available") && ( <>
-                                                        <strong>Available</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {`${quiz.number_questions}`} Questions | Score: {scores[quiz._id]} / {quiz.points}
-                                                      
+                                                        <strong>Available</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
                                                         </>
                                                     )}
                                                     {(quiz.availability==="Not Available Until") && ( <>
-                                                        <strong>Not Available Until</strong> {`${quiz.available_until}`.toString().split("T")[0]} | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {`${quiz.number_questions}`} Questions | Score: {scores[quiz._id]} / {quiz.points}
+                                                        <strong>Not Available Until</strong> {`${quiz.available_until}`.toString().split("T")[0]} | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
                                                         </>
                                                     )}
                                                     {(quiz.availability==="") && ( <>
-                                                        <strong>Undefined</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {`${quiz.number_questions}`} Questions | Score: {scores[quiz._id]} / {quiz.points}
+                                                        <strong>Undefined</strong> | <strong>Due</strong> {`${quiz.due_date}`.toString().split("T")[0]} | {isStudentView? `${quiz.points} pts |`: null} {`${quiz.number_questions}`} Questions {isStudentView? null: `| Score: - /${quiz.points}`}
                                                         </>
                                                     )}
-                                                    
+
+                                                    <br />
+                                                        
                                                 </div>
                                             </div>
 
-                                            
-                                        </li>)}</>
+
+                                        </li>}
+                                        </>
                                     ))
-                                }</ProtectedContentEnrollment>
+                                }
+
                             </ul>
                         </li >
                     </ul>
+                </div> 
+                </div>
                 </div>
 
+                </>
 
-            </div>
 
-        </>
-    );
-}
+            </ProtectedContentEnrollment>
+
+
+            </>
+    )}
+                    

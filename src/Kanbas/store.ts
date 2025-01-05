@@ -7,7 +7,10 @@ import coursesReducer from "./Dashboard/Courses/reducer";
 import quizzesReducer from "./Dashboard/Courses/Quizzes/quizzesReducer";
 import questionsReducer from "./Dashboard/Courses/Quizzes/questionsReducer";
 import resultsReducer from "./Dashboard/Courses/Quizzes/resultsReducer";
-
+import filesReducer from "./Dashboard/Courses/filesReducer";
+import assignmentsResultsReducer from "./Dashboard/Courses/Assignments/assignmentResultsReducer";
+import studentFilesReducer from "./Dashboard/Courses/Assignments/studentFileReducer";
+import gradesReducer from "./Dashboard/Courses/Grades/reducer";
 const store = configureStore({
 
   reducer: {
@@ -19,6 +22,10 @@ const store = configureStore({
     quizzesReducer,
     questionsReducer,
     resultsReducer,
+    filesReducer,
+    assignmentsResultsReducer,
+    studentFilesReducer,
+    gradesReducer,
   },
 });
 export default store;

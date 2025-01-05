@@ -48,6 +48,18 @@ const resultsSlice = createSlice({
               state.results = [...updatedResults, newResult];
             },  
 
+        updateResults: (state, action) => {
+            const updatedResult = action.payload;
+        
+            const index = state.results.findIndex(
+                (result: any) => result._id === updatedResult._id
+            );
+        
+            if (index !== -1) {
+                // Update the existing result
+                state.results[index] = { ...state.results[index], ...updatedResult };
+            }
+            },
 
 
             
@@ -57,5 +69,5 @@ const resultsSlice = createSlice({
     
     }})
 
-export const { addResults, setResults } = resultsSlice.actions;
+export const { addResults, setResults,updateResults } = resultsSlice.actions;
 export default resultsSlice.reducer;

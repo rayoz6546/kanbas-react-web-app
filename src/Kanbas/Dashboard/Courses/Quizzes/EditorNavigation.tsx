@@ -40,6 +40,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
     const [setQuizWebcamRequired, setNewQuizWebcamRequired] = useState(quiz ? quiz.webcam_required : false)
     const [setQuizLockQuestions, setNewQuizLockQuestions] = useState(quiz ? quiz.lock_questions_after_answering : false)
     const [setPublished, setNewPublished] = useState(quiz ? quiz.published : false)
+    const [setPercentage, setNewPercentage] = useState(quiz ? quiz.percentage : null)
 
     const [setQuizDescription, setNewQuizDescription] = useState(quiz ? quiz.description : "")
     const [setQuizQuestions, setNewQuizQuestions] = useState(quiz ? quiz.questions : [])
@@ -125,7 +126,8 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 lock_questions_after_answering: setQuizLockQuestions,
                 description: setQuizDescription,
                 published: published,
-                questions: stagedQuestions,}
+                questions: stagedQuestions,
+                percentage: setPercentage,}
 
             await quizzesClient.updateQuiz(updatedQuiz);
             dispatch(updateQuiz(updatedQuiz));
@@ -162,7 +164,8 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 lock_questions_after_answering: setQuizLockQuestions,
                 description: setQuizDescription,
                 published: published,
-                questions: stagedQuestions,}
+                questions: stagedQuestions,
+                percentage:setPercentage,}
 
             const new_quiz = await coursesClient.createQuizForCourse(cid as string, newQuiz);
             dispatch(addQuiz(new_quiz));
@@ -208,13 +211,13 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 setQuizTitle={setQuizTitle} setQuizAvailableFrom={setQuizAvailableFrom} setQuizAvailableUntil={setQuizAvailableUntil} setQuizDueDate={setQuizDueDate} setQuizScore={setQuizScore}
                 setQuizPoints={setQuizPoints} setQuizNumberAttempts={setQuizNumberAttempts} setQuizType={setQuizType} setQuizAssignmentGroup={setQuizAssignmentGroup} setQuizShuffle={setQuizShuffle} setQuizTimeLimit={setQuizTimeLimit} setQuizMultipleAttempts={setQuizMultipleAttempts}
                 setQuizNumberQuestions={setQuizNumberQuestions} setQuizShowCorrectAnswers={setQuizShowCorrectAnswers} setQuizAccessCode={setQuizAccessCode} setQuizOneQuestionAtATime={setQuizOneQuestionAtATime} setQuizWebcamRequired={setQuizWebcamRequired} showCorrectAnswersWhen={showCorrectAnswersWhen}
-                setQuizLockQuestions={setQuizLockQuestions} setQuizDescription={setQuizDescription} setQuizAvailability={setQuizAvailability} setPublished={setPublished} setNewPublished={setNewPublished}
+                setQuizLockQuestions={setQuizLockQuestions} setQuizDescription={setQuizDescription} setQuizAvailability={setQuizAvailability} setPublished={setPublished} setNewPublished={setNewPublished} setPercentage={setPercentage} setNewPercentage={setNewPercentage}
                 setNewQuizTitle={setNewQuizTitle} setNewQuizAvailableFrom={setNewQuizAvailableFrom} setNewQuizAvailableUntil={setNewQuizAvailableUntil} setNewQuizDueDate={setNewQuizDueDate} setNewQuizScore={setNewQuizScore} setShowCorrectAnswersWhen={setShowCorrectAnswersWhen}
                 setNewQuizPoints={setNewQuizPoints} setNewQuizNumberAttempts={setNewQuizNumberAttempts} setNewQuizType={setNewQuizType} setNewQuizAssignmentGroup={setNewQuizAssignmentGroup} setNewQuizShuffle={setNewQuizShuffle} setNewQuizTimeLimit={setNewQuizTimeLimit} setNewQuizMultipleAttempts={setNewQuizMultipleAttempts}
                 setNewQuizNumberQuestions={setNewQuizNumberQuestions} setNewQuizShowCorrectAnswers={setNewQuizShowCorrectAnswers} setNewQuizAccessCode={setNewQuizAccessCode} setNewQuizOneQuestionAtATime={setNewQuizOneQuestionAtATime} setNewQuizWebcamRequired={setNewQuizWebcamRequired} 
                 setNewQuizLockQuestions={setNewQuizLockQuestions} setNewQuizDescription={setNewQuizDescription} setNewQuizAvailability={setNewQuizAvailability}
                 quizzes={quizzes} newQuizId={newQuizId} handleCancelQuiz={handleCancelQuiz} handleUpdateQuiz={handleUpdateQuiz}/>} />
-                <Route path="Questions" element={<QuizEditorQuestions quiz={quiz} setQuizQuestions={setQuizQuestions} setNewQuizQuestions={setNewQuizQuestions} questionsToDelete={questionsToDelete}  setQuestionsToDelete={setQuestionsToDelete} handleSaveQuestions={handleSaveQuestions}
+                <Route path="Questions" element={<QuizEditorQuestions quiz={quiz} setQuizQuestions={setQuizQuestions} setNewQuizQuestions={setNewQuizQuestions} questionsToDelete={questionsToDelete}  setQuestionsToDelete={setQuestionsToDelete} handleSaveQuestions={handleSaveQuestions} 
            
               handleCancelQuestions={handleCancelQuestions}
 

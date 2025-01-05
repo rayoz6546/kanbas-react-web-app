@@ -12,17 +12,15 @@ export default function KanbasNavigation() {
   const links = [
     { label: "Dashboard", path: "/Kanbas/Dashboard", icon: AiOutlineDashboard },
     { label: "Courses",   path: "/Kanbas/Dashboard", icon: LiaBookSolid },
-    { label: "Github Client",      path: "https://github.com/rayoz6546/CS-5610-Final-Project.git",             icon: FaGithub },
-    { label: "Github Server",      path: "https://github.com/rayoz6546/CS-5610-Final-Project-server.git",             icon: FaGithub },
+    { label: "Github Client",      path: "https://github.com/rayoz6546/kanbas-react-web-app.git",             icon: FaGithub },
+    { label: "Github Server",      path: "https://github.com/rayoz6546/kanbas-node-server-app.git",             icon: FaGithub },
   ];
 
   return (
     <div id="wd-kanbas-navigation" style={{ width: 120 }} className="list-group rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2">
 
-      <a id="wd-neu-link" target="_blank" 
-        href="https://www.northeastern.edu/"
-        className="list-group-item bg-black border-0 text-center">
-        <img src="/images/RayozWeb.png" width="100px" style={{position:"relative", left:"-5%"}}/></a>
+
+        <h1 className="ms-4 text-info" style={{fontSize:"100px"}}>K</h1>
 
         <Link to="/Kanbas/Account" className={`list-group-item text-center border-0 bg-black
             ${pathname.includes("Account") ? "bg-white text-info" : "bg-black text-white"}`}>

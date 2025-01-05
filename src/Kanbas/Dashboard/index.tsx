@@ -34,7 +34,7 @@ export default function Dashboard(
           <button className="btn btn-primary float-end"
                   id="wd-add-new-course-click"
                   onClick={()=>{
-                  const newCourse = { ...course, _id: new Date().getTime().toString(), image:"/images/react.jpg" };
+                  const newCourse = { ...course, _id: new Date().getTime().toString(), image:"/images/red.jpg" };
                   setCourse(newCourse);  addNewCourse()}}
                   >
                     Add </button>
@@ -60,7 +60,7 @@ export default function Dashboard(
           <button className="btn btn-primary float-end"
                   id="wd-add-new-course-click"
                   onClick={()=>{
-                  const newCourse = { ...course, _id: new Date().getTime().toString(), image:"/images/react.jpg" };
+                  const newCourse = { ...course, _id: new Date().getTime().toString(), image:"/images/red.jpg" };
                   setCourse(newCourse);  addNewCourse()}}
                   >
                     Add </button>

@@ -7,11 +7,15 @@ import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { IoIosNotifications } from "react-icons/io";
 import ProtectedContent from "../../../Account/ProtectedContent";
+import { MdEmail } from "react-icons/md";
 
-export default function CourseStatus() {
+export default function CourseStatus({isStudentView}:{isStudentView:Boolean}) {
   return (
     <div id="wd-course-status" style={{ width: "300px" }}>
       <h2>Course Status</h2>
+      {isStudentView ? (
+        <>
+      
       <ProtectedContent>
       <div className="d-flex">
         <div className="w-50 pe-1">
@@ -27,25 +31,36 @@ export default function CourseStatus() {
 
       <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
         <BiImport className="me-2 fs-5" /> Import Existing Content </button>
-      <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <LiaFileImportSolid className="me-2 fs-5" /> Import from Commons </button>
 
-        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <IoMdHome className="me-2 fs-5" /> Choose Home Page </button>
+
 
         </ProtectedContent>
 
         <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <BiSolidBarChartAlt2 className="me-2 fs-5" /> View Course Screen </button>
-
-        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <TfiAnnouncement className="me-2 fs-5" /> New Announcement </button>
-
-        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <BiSolidBarChartAlt2 className="me-2 fs-5" /> New Analytics </button>
+        <TfiAnnouncement className="me-2 fs-5" /> Announcements </button>
 
         <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
         <IoIosNotifications className="me-2 fs-5" /> View Course Notifications </button>
+
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <BiSolidBarChartAlt2 className="me-2 fs-5" /> Vew Analytics </button>
+
+        </>
+) : 
+<>
+
+
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <TfiAnnouncement className="me-2 fs-5" /> Announcements </button>
+
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <IoIosNotifications className="me-2 fs-5" /> View Course Notifications </button>
+
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <BiSolidBarChartAlt2 className="me-2 fs-5" /> Vew Analytics </button>
+
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <MdEmail className="me-2 fs-5" /> Outlook </button></>}
 
     </div>
 );}

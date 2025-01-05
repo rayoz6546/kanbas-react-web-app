@@ -13,7 +13,7 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
     setQuizLockQuestions, setQuizDescription, setNewQuizTitle, setNewQuizAvailableFrom, setNewQuizAvailableUntil, setNewQuizDueDate,setNewQuizScore, setShowCorrectAnswersWhen,
     setNewQuizPoints, setNewQuizNumberAttempts, setNewQuizType, setNewQuizAssignmentGroup, setNewQuizShuffle, setNewQuizTimeLimit, setNewQuizMultipleAttempts,
     setNewQuizNumberQuestions, setNewQuizShowCorrectAnswers, setNewQuizAccessCode, setNewQuizOneQuestionAtATime, setNewQuizWebcamRequired, setNewQuizAvailability,setPublished, setNewPublished,
-    setNewQuizLockQuestions, setNewQuizDescription, quizzes, newQuizId, handleUpdateQuiz, handleCancelQuiz}:{
+    setNewQuizLockQuestions, setNewQuizDescription, quizzes, newQuizId, handleUpdateQuiz, handleCancelQuiz, setPercentage, setNewPercentage}:{
     setQuizTitle:any, setQuizAvailableFrom:any, setQuizAvailableUntil:any, setQuizDueDate:any,setQuizScore:any,
     setQuizPoints:any, setQuizNumberAttempts:any, setQuizType:any, setQuizAssignmentGroup:any, setQuizShuffle:any, setQuizTimeLimit:any, setQuizMultipleAttempts:any, showCorrectAnswersWhen:any,
     setQuizNumberQuestions:any, setQuizShowCorrectAnswers:any, setQuizAccessCode:any, setQuizOneQuestionAtATime:any, setQuizWebcamRequired:any, 
@@ -21,7 +21,7 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
     setNewQuizTitle:any, setNewQuizAvailableFrom:any, setNewQuizAvailableUntil:any, setNewQuizDueDate:any,setNewQuizScore:any,
     setNewQuizPoints:any, setNewQuizNumberAttempts:any, setNewQuizType:any, setNewQuizAssignmentGroup:any, setNewQuizShuffle:any, setNewQuizTimeLimit:any, setNewQuizMultipleAttempts:any, setShowCorrectAnswersWhen:any,
     setNewQuizNumberQuestions:any, setNewQuizShowCorrectAnswers:any, setNewQuizAccessCode:any, setNewQuizOneQuestionAtATime:any, setNewQuizWebcamRequired:any, setPublished:any, setNewPublished:any,
-    setNewQuizLockQuestions:any, setNewQuizDescription:any, quizzes:any, newQuizId:any, handleUpdateQuiz:(b:boolean)=>void, handleCancelQuiz:()=>void
+    setNewQuizLockQuestions:any, setNewQuizDescription:any, quizzes:any, newQuizId:any, handleUpdateQuiz:(b:boolean)=>void, handleCancelQuiz:()=>void, setPercentage:any, setNewPercentage:any
     }
 ) {
     const { cid, qid } = useParams()
@@ -69,16 +69,7 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
 
     }, [setQuizDueDate, setQuizAvailableFrom, setQuizAvailableUntil]);
 
-    // useEffect(() => {
 
-    //     if (setQuizShowCorrectAnswers) {
-    //         if (showCorrectAnswersWhen==="Immediately" || showCorrectAnswersWhen==="Choose Date")
-    //         setShowCorrectAnswersWhen("Immediately");
-    //     } else {
-    //         setShowCorrectAnswersWhen("");
-    //     }
-
-    // }, [setQuizShowCorrectAnswers]);
 
 
     return (
@@ -134,9 +125,12 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                                             </li>
 
                                             <li className="list-group-item border-0">
-                                                <div className="col"><input type="checkbox" name="wd-quiz-editor-shuffle" id="wd-quiz-editor-shuffle" className="form-check-input me-2"
-                                                    checked = {setQuizShuffle} onChange={() => setNewQuizShuffle((prev: any) => !prev)}  />
-                                                    <label htmlFor="wd-quiz-editor-shuffle">Shuffle Answers</label></div>
+                                                <div className="row">
+                                                    <div className="col mt-1">
+                                                        <label htmlFor="wd-quiz-editor-percentage">Percentage</label></div>
+                                                    <div className="col"><input type="text" name="wd-quiz-editor-percentage" id="wd-quiz-editor-percentage"
+                                                        value = {setPercentage} onChange={(e) => setNewPercentage(parseInt(e.target.value))} /></div>
+                                                </div>
                                             </li>
 
                                             <li className="list-group-item border-0">
@@ -217,17 +211,8 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                                                     <label htmlFor="wd-quiz-editor-order">One Question at a Time</label></div>
                                             </li>
 
-                                            <li className="list-group-item border-0">
-                                                <div className="col"><input type="checkbox" name="wd-quiz-editor-webcam" id="wd-quiz-editor-webcam" className="form-check-input me-2"
-                                                    checked = {setQuizWebcamRequired} onChange={() => setNewQuizWebcamRequired((prev: any) => !prev)} />
-                                                    <label htmlFor="wd-quiz-editor-webcam">Webcam Required</label></div>
-                                            </li>
 
-                                            <li className="list-group-item border-0">
-                                                <div className="col"><input type="checkbox" name="wd-quiz-editor-lock" id="wd-quiz-editor-lock" className="form-check-input me-2"
-                                                    checked={setQuizLockQuestions} onChange={() => setNewQuizLockQuestions((prev: any) => !prev)}  />
-                                                    <label htmlFor="wd-quiz-editor-lock">Lock Questions After Answering</label></div>
-                                            </li>
+
                                         </ul>
                                     </div>
                                 </div>
