@@ -70,7 +70,7 @@ export default function Grades() {
         const fetchAllGrades = async () => {
             const grades: Record<string, number> = {};
             for (const user of users) {
-                if (user.role !== "FACULTY" && user.role !== "ADMIN") {
+                if (user && user.role !== "FACULTY" && user.role !== "ADMIN") {
                     grades[user._id] = await calculateGrade(user._id);
                 }
             }
@@ -197,7 +197,7 @@ export default function Grades() {
                             <tr key={user._id}>
                                 <>
                                 {user.role!== "FACULTY" && user.role !== "ADMIN" &&
-                                <>
+                               <>
                                 <td>{user.firstName} {user.lastName}</td>
                                 <td>{user.section}</td>
                                 <td>{user.loginId}</td>

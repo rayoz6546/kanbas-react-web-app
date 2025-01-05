@@ -108,7 +108,6 @@ export default function Modules({ collapsed, setCollapsed, allIconsVisible, setA
 
         {isStudentView ? (<>
 
-     
 
         <ModulesControls
           moduleName={moduleName}
