@@ -200,9 +200,6 @@ export default function Analytics() {
     return (
         <div>
 
-
-  
-
             <h4 style={{background:"lightgrey"}} className="p-2">Assignments</h4>
 
             <table className="table table-striped">
