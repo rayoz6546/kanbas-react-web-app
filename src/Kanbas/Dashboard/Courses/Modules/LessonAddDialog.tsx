@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import * as modulesClient from "./client";
 import * as filesClient from "../filesClient";
 import { addFile } from "../filesReducer";
-
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
 export default function AddLessonDialog({
   dialogTitle,
   moduleId,
@@ -18,6 +18,23 @@ export default function AddLessonDialog({
   const [lessonFile, setLessonFile] = useState<File | null>(null);
   const [activeInput, setActiveInput] = useState<"name" | "link" | "file" | null>(null);
   const dispatch = useDispatch();
+
+    const [errorFile, setErrorFile] = useState<string | null>(null); 
+
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+
+      if (file) {
+        if (file.size > MAX_FILE_SIZE) {
+          setLessonFile(null)
+          setErrorFile("File size must be less than 2MB.")
+        }
+        else {
+          setLessonFile(file)
+        }
+      }
+    }
 
   const addLesson = async () => {
     if (!activeInput) return;
@@ -98,10 +115,11 @@ export default function AddLessonDialog({
       {activeInput === "file" && (
         <input
           type="file"
-          onChange={(e) => setLessonFile(e.target.files?.[0] || null)}
+          onChange={handleFileUpload}
           className="form-control mb-2"
         />
       )}
+      {errorFile && <p className="text-danger" style={{ fontSize: "0.875rem" }}>{errorFile}</p>}
       <div className="d-flex justify-content-end gap-2">
         <button onClick={closeDialog} className="btn btn-secondary">
           Cancel

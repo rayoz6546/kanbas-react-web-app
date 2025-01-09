@@ -37,11 +37,11 @@ export default function QuizDetails() {
         dispatch(setResults(results))
      }
  
-    //  const fetchQuizzes = async () => {
-    //     const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
-    //     dispatch(setQuizzes(quizzes));
+     const fetchQuizzes = async () => {
+        const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
+        dispatch(setQuizzes(quizzes));
 
-    //   };
+      };
 
 
      useEffect(() => {
@@ -53,6 +53,14 @@ export default function QuizDetails() {
      }, [results, result]);
 
 
+
+     useEffect(() => {
+
+        fetchQuizzes()
+
+
+         
+     }, []);
 
 
 
@@ -184,7 +192,7 @@ export default function QuizDetails() {
 
 
                                                 <li className="list-group-item border-0 text-nowrap d-flex justify-content-end">
-                                                    <div className="col-auto me-5"><strong>Shuffle Answers</strong></div>
+                                                    <div className="col-auto me-5"><strong>Weight</strong></div>
                                                 </li>
 
                                                 <li className="list-group-item border-0 text-nowrap d-flex justify-content-end">
@@ -211,13 +219,6 @@ export default function QuizDetails() {
                                                     <div className="col-auto me-5"><strong>One Question at a Time</strong></div>
                                                 </li>
 
-                                                <li className="list-group-item border-0 text-nowrap d-flex justify-content-end">
-                                                    <div className="col-auto me-5"><strong>Webcam Required</strong></div>
-                                                </li>
-
-                                                <li className="list-group-item border-0 text-nowrap d-flex justify-content-end">
-                                                    <div className="col-auto me-5"><strong>Lock Questions After Answering</strong></div>
-                                                </li>
                                             </ul>
                                         </div>
 
@@ -240,7 +241,7 @@ export default function QuizDetails() {
 
 
                                                 <li className="list-group-item border-0 text-nowrap">
-                                                    <div className="col-auto">{quiz.shuffle_answers ? "Yes" : "No"}</div>
+                                                    <div className="col-auto">{quiz.percentage ? quiz.percentage : "--"}%</div>
                                                 </li>
 
                                                 <li className="list-group-item border-0 text-nowrap">
@@ -267,13 +268,7 @@ export default function QuizDetails() {
                                                     <div className="col-auto">{quiz.one_question_at_a_time ? "Yes" : "No"}</div>
                                                 </li>
 
-                                                <li className="list-group-item border-0 text-nowrap">
-                                                    <div className="col-auto">{quiz.webcam_required ? "Yes" : "No"}</div>
-                                                </li>
-
-                                                <li className="list-group-item border-0 text-nowrap">
-                                                    <div className="col-auto">{quiz.lock_questions_after_answering ? "Yes" : "No"}</div>
-                                                </li>
+ 
                                             </ul>
                                         </div>
 

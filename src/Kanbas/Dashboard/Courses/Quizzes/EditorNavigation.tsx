@@ -24,7 +24,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
     const [setQuizAvailableFrom, setNewQuizAvailableFrom] = useState(quiz ? quiz.available_from : "")
     const [setQuizAvailableUntil, setNewQuizAvailableUntil] = useState(quiz ? quiz.available_until : "")
     const [setQuizDueDate, setNewQuizDueDate] = useState(quiz ? quiz.due_date : "")
-    const [setQuizPoints, setNewQuizPoints] = useState(quiz ? quiz.points : "0")
+    const [setQuizPoints, setNewQuizPoints] = useState(quiz ? quiz.points : 0)
     const [setQuizNumberQuestions, setNewQuizNumberQuestions] = useState(quiz ? quiz.number_questions : "0")
     const [setQuizScore, setNewQuizScore] = useState(quiz ? quiz.score : "")
     const [setQuizType, setNewQuizType] = useState(quiz ? quiz.quiz_type : "Graded Quiz")
@@ -217,7 +217,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 setNewQuizNumberQuestions={setNewQuizNumberQuestions} setNewQuizShowCorrectAnswers={setNewQuizShowCorrectAnswers} setNewQuizAccessCode={setNewQuizAccessCode} setNewQuizOneQuestionAtATime={setNewQuizOneQuestionAtATime} setNewQuizWebcamRequired={setNewQuizWebcamRequired} 
                 setNewQuizLockQuestions={setNewQuizLockQuestions} setNewQuizDescription={setNewQuizDescription} setNewQuizAvailability={setNewQuizAvailability}
                 quizzes={quizzes} newQuizId={newQuizId} handleCancelQuiz={handleCancelQuiz} handleUpdateQuiz={handleUpdateQuiz}/>} />
-                <Route path="Questions" element={<QuizEditorQuestions quiz={quiz} setQuizQuestions={setQuizQuestions} setNewQuizQuestions={setNewQuizQuestions} questionsToDelete={questionsToDelete}  setQuestionsToDelete={setQuestionsToDelete} handleSaveQuestions={handleSaveQuestions} 
+                <Route path="Questions" element={<QuizEditorQuestions setQuizQuestions={setQuizQuestions} setNewQuizQuestions={setNewQuizQuestions} questionsToDelete={questionsToDelete}  setQuestionsToDelete={setQuestionsToDelete} handleSaveQuestions={handleSaveQuestions} 
            
               handleCancelQuestions={handleCancelQuestions}
 

@@ -33,3 +33,9 @@ const RESULTS_API = `${REMOTE_SERVER}/api/results`;
     const response = await axios.delete(`${RESULTS_API}/${courseId}/${quizId}`);
     return response.data;
   }
+
+
+  export const fetchAllResults = async () => { 
+    const response = await axios.get(`${RESULTS_API}`);
+    return response.data;
+  }

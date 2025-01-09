@@ -6,7 +6,7 @@ import AssignmentEditor from "./Assignments/Editor";
 import { FaAlignJustify } from "react-icons/fa";
 import CoursesNavigation from "./Navigation";
 import CourseStatus from "./Home/Status";
-import PeopleTable from "./People/Table";
+import PeopleTable from "./People";
 import Quizzes from "./Quizzes";
 import QuizDetails from "./Quizzes/QuizDetails";
 import { useViewContext, ViewProvider } from "./Quizzes/View";
@@ -17,7 +17,6 @@ import QuizPreview from "./Quizzes/QuizPreview";
 import QuizPreviewResults from "./Quizzes/QuizPreviewResults";
 import TakeQuiz from "./Quizzes/TakeQuiz";
 import QuizResults from "./Quizzes/QuizResults";
-import * as coursesClient from "../Courses/client";
 import { setQuizzes } from "./Quizzes/quizzesReducer";
 import { setResults } from "./Quizzes/resultsReducer";
 import * as resultsClient from "./Quizzes/resultsClient";
@@ -28,14 +27,30 @@ import StudentViewButton from "./Quizzes/StudentViewButton";
 import TakeAssignment from "./Assignments/TakeAssignment";
 import GradeStudent from "./Grades/GradeStudent";
 import StudentQuizResults from "./Grades/studentQuizResults";
-import { assignments } from "../../Database";
-
-export default function Courses({ courses }: {
-  courses: any[];
-}) {
+import Analytics from "./Analytics";
+import { setCourses } from "./reducer";
+import * as courseClient from "../Courses/client";
+export default function Courses() {
   const { cid } = useParams();
-  const course = courses.find((course) => course._id === cid);
+  const {courses} = useSelector((state: any) => state.coursesReducer);
+  const course = courses.find((course:any) => course._id === cid);
+
+  const fetchAllCourses = async () => {
+    try {
+      const allCourses = await courseClient.fetchAllCourses()    
+      dispatch(setCourses(allCourses));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllCourses();
+
+  }, []);
+
   const { pathname } = useLocation();
+  
   const {quizzes} = useSelector((state: any) => state.quizzesReducer);
   const {assignments} = useSelector((state: any) => state.assignmentsReducer);
   const assignment = assignments.find((a:any)=>a._id===pathname.split("/")[5])
@@ -84,7 +99,7 @@ const toggleIcons = (Id: string) => {
   return (
     
     <div id="wd-courses">
-      <h2 id="wd-course-title" className="text-primary"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.name} &gt; {pathname.split("/")[4]} &gt; {(quizzes) && (quiz) && quiz.title} {(assignments) && (assignment) && assignment.title}</h2>
+      <h2 id="wd-course-title" className="text-primary"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.number && course.number} {course && course.name && course.name} &gt; {pathname.split("/")[4]} &gt; {(quizzes) && (quiz) && quiz.title} {(assignments) && (assignment) && assignment.title}</h2>
 
       <hr />
       <div className="d-flex">
@@ -113,6 +128,7 @@ const toggleIcons = (Id: string) => {
               <Route path="Grades/:uid" element={<GradeStudent />} />
               <Route path="Grades/:uid/:qid" element={<StudentQuizResults />} />
               <Route path="People" element={<PeopleTable />} />
+              <Route path="Analytics" element={<Analytics />} />
               
             </Routes>
           </ViewProvider>

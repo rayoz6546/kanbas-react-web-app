@@ -49,3 +49,9 @@ export const fetchAllAssignmentsResultsByUser = async (userId:string)=> {
         throw error;
     }
 };
+
+export const fetchAllAssignmentsResults = async ()=> {
+  const response = await axios.get(`${ASSIGNMENTSRESULTS_API}`);
+
+  return response.data;
+}

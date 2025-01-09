@@ -60,7 +60,7 @@ export default function QuizResults() {
 
     return (
         <div className="container-fluid" id="wd-take-quiz">
-            
+        
 
                 <div className="row d-flex">
                 <div className="col-8 me-5 ">

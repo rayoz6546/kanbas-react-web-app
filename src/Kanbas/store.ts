@@ -10,7 +10,7 @@ import resultsReducer from "./Dashboard/Courses/Quizzes/resultsReducer";
 import filesReducer from "./Dashboard/Courses/filesReducer";
 import assignmentsResultsReducer from "./Dashboard/Courses/Assignments/assignmentResultsReducer";
 import studentFilesReducer from "./Dashboard/Courses/Assignments/studentFileReducer";
-import gradesReducer from "./Dashboard/Courses/Grades/reducer";
+import usersReducer from "./Account/usersReducer";
 const store = configureStore({
 
   reducer: {
@@ -25,7 +25,7 @@ const store = configureStore({
     filesReducer,
     assignmentsResultsReducer,
     studentFilesReducer,
-    gradesReducer,
+    usersReducer,
   },
 });
 export default store;

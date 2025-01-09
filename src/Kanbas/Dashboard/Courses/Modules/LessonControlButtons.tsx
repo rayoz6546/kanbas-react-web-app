@@ -5,11 +5,14 @@ import { CiNoWaitingSign } from "react-icons/ci";
 import * as modulesClient from "./client";
 import { updateLessonInModule } from "./reducer";
 import { useState } from "react";
+import { FaPencil } from "react-icons/fa6";
 
-export default function LessonControlButtons({handleDelete, moduleId, lessonId,allIconsVisible, visibleIcons,toggleIcons}:{  handleDelete: (moduleId: string, lessonId: string, lesson:any) => void;
+export default function LessonControlButtons({setEditingID,handleDelete, moduleId,setIsEditing, lessonId,allIconsVisible, visibleIcons,toggleIcons}:{  handleDelete: (moduleId: string, lessonId: string, lesson:any) => void;
   moduleId: string;
+  setEditingID:any;
   lessonId: string;
   allIconsVisible: boolean;
+  setIsEditing:any
   visibleIcons:any, 
   toggleIcons: (Id:any)=>void
 }) 
@@ -54,10 +57,26 @@ export default function LessonControlButtons({handleDelete, moduleId, lessonId,a
       console.error("Failed to toggle publish status:", error);
     }
   };
+
+
+
+
   return (
     <div className="float-end">
 
 {isVisible && (<>
+
+
+          <FaPencil
+            className="text-primary me-3"
+            style={{ cursor: "pointer" }}
+            onClick={() => {setIsEditing((prev:any)=>!prev); setEditingID(lesson._id)}}
+          />
+          <FaTrash
+      className="text-danger me-3"
+      onClick={()=>handleDelete(moduleId,lessonId,lesson)}
+      style={{ cursor: "pointer" }}
+    />
     <span className="me-1 position-relative" onClick={()=>handlePublishToggle()} >
     {lesson.published ? ( 
         <FaCheckCircle style={{ top: "0.5px", cursor:"pointer" }} className=" text-success position-relative fs-4" />
@@ -65,11 +84,13 @@ export default function LessonControlButtons({handleDelete, moduleId, lessonId,a
         <CiNoWaitingSign className="fs-4 position-relative" style={{ top: "0.5px", cursor:"pointer" }}/>
     )}
     </span>
-      <FaTrash
-      className="text-danger ms-2"
-      onClick={()=>handleDelete(moduleId,lessonId,lesson)}
-      style={{ cursor: "pointer" }}
-    /></>)}
+
+
+
+    
+    </>
+    
+    )}
 
           <button
         id="wd-module-menu-btn"

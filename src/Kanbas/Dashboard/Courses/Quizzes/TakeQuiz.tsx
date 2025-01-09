@@ -1,18 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { addResults } from "./resultsReducer";
+import { addResults, setResults } from "./resultsReducer";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import * as questionsClient from "./questionsClient";
 import * as resultsClient from "./resultsClient";
 import { setQuestions } from "./questionsReducer";
-
+import { current } from "@reduxjs/toolkit";
+import * as assignmentsResultsClient from "../Assignments/assignmentsResultsClient";
+import * as coursesClient from "../client";
+import { setAssignments } from "../Assignments/reducer";
+import * as enrollmentsClient from "../../Enrollment/client";
+import { setEnrollments, updateEnrollment } from "../../Enrollment/reducer";
+import { setAssignmentResults } from "../Assignments/assignmentResultsReducer";
+import { setQuizzes } from "./quizzesReducer";
 
 
 export default function TakeQuiz() {
     const { cid, qid} = useParams()
-
+    const [userGrades, setUserGrades] = useState<Record<string, number>>({});
     
     const {quizzes} = useSelector((state:any)=> state.quizzesReducer)
     const questions = quizzes.flatMap((quiz: any) =>
@@ -27,11 +34,21 @@ export default function TakeQuiz() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const result = results.find((res:any)=> res.quizId === qid && res.courseId=== cid && res.userId === currentUser._id)
 
+    const {enrollments} = useSelector((state:any)=>state.enrollmentsReducer)
+    const fetchEnrollments = async () => {
+        const enrollments = await enrollmentsClient.findAllEnrollments()
+        dispatch(setEnrollments(enrollments))
+        };
+
+    const [isLoading, setIsLoading] = useState(true);
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const [userAnswers, setUserAnswers] = useState([]);
+
+
+
 
     const date_submit = () => {
         const now = new Date();
@@ -52,7 +69,85 @@ export default function TakeQuiz() {
     const [remainingTime, setRemainingTime] = useState<number | null>(null); 
     const [isTimeUp, setIsTimeUp] = useState(false); 
     const [quizStartTime, setQuizStartTime] = useState<number | null>(null); 
+    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
+    const fetchResults = async () => {
+            const results = await resultsClient.fetchResultsByUser(cid as string, currentUser._id as string)
+            dispatch(setResults(results))
+        }
+    const fetchAssignments = async () => {
+        const assignments = await coursesClient.findAssignmentsForCourse(cid as string)
+        dispatch(setAssignments(assignments))
+    }
+    const fetchQuizzes = async () => {
+        const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
+
+        dispatch(setQuizzes(quizzes));
+
+        };
+
+    const fetchAssignmentsResults = async () => {
+        const assignmentsResults = await assignmentsResultsClient.fetchAllAssignmentsResultsByUser(currentUser._id as string)
+
+        dispatch(setAssignmentResults(assignmentsResults))
+    }
+    const calculateGrade = async (userId: string, newResult: any = null) => {
+        const updatedResults = newResult
+            ? [...results.filter((r: any) => r._id !== newResult._id), newResult]
+            : results;
+        
+        const assignmentsResults = await assignmentsResultsClient.fetchAllAssignmentsResultsByUser(userId);
+        
+        let totalWeightedScore = 0;
+        let totalPercentage = 0;
+    
+        // Map quizzes and assignments to their latest results
+        const latestQuizResults = updatedResults.reduce((acc: any, result: any) => {
+            acc[result.quizId] = result; // Retain only the latest result for each quizId
+            return acc;
+        }, {});
+    
+        const latestAssignmentResults = assignmentsResults.reduce((acc: any, result: any) => {
+            acc[result.assignmentId] = result; 
+            return acc;
+        }, {});
+    
+        const quizMap = quizzes.reduce((acc: any, quiz: any) => {
+            acc[quiz._id] = quiz;
+            return acc;
+        }, {});
+    
+        const assignmentMap = assignments.reduce((acc: any, assignment: any) => {
+            acc[assignment._id] = assignment;
+            return acc;
+        }, {});
+    
+        Object.values(latestQuizResults).forEach((result: any) => {
+            const quiz = quizMap[result.quizId];
+            if (quiz && quiz.percentage && quiz.points) {
+                const weightedScore = (result.score / quiz.points) * quiz.percentage;
+                totalWeightedScore += weightedScore;
+                totalPercentage += quiz.percentage;
+            }
+        });
+    
+        Object.values(latestAssignmentResults).forEach((result: any) => {
+            const assignment = assignmentMap[result.assignmentId];
+            if (assignment && assignment.percentage && assignment.points) {
+                const weightedScore = (result.score / assignment.points) * assignment.percentage;
+                totalWeightedScore += weightedScore;
+                totalPercentage += assignment.percentage;
+            }
+        });
+    
+        if (totalPercentage > 100) {
+            totalWeightedScore = (totalWeightedScore / totalPercentage) * 100;
+        }
+    
+        return Number(totalWeightedScore.toFixed(2));
+    };
+    
+        
 
     const fetchQuestions = async () => {
         const questions = await questionsClient.fetchQuestions(qid as string);
@@ -60,45 +155,61 @@ export default function TakeQuiz() {
       };
   
 
-    const submit = async () => {
+      const submit = async () => {
+        try {
+            let newResult;
+            if (!result) {
+                newResult = {
+                    _id: Date.now().toString(),
+                    quizId: qid,
+                    courseId: cid,
+                    userId: currentUser._id,
+                    score: calculateScore(),
+                    answers: userAnswers,
+                    timetaken: calculateTimeTaken().toString(),
+                    attempt: 1,
+                    submitted_date: date_submit(),
+                };
 
-        if (!result) {
-   
-        const newResult = {
-            _id: Date.now().toString(),
-            quizId: qid,
-            courseId: cid,
-            userId: currentUser._id,
-            score: calculateScore(),
-            answers: userAnswers,
-            timetaken: calculateTimeTaken().toString(),
-            attempt: 1,
-            submitted_date: date_submit(),
-        }
-
-
-        const new_result = await resultsClient.createResults(qid as string, currentUser._id, newResult)
-        dispatch(addResults(new_result))}
-
-        else {
-            const updatedResult = {
-                _id: result._id,
-                quizId: qid,
-                courseId: cid,
-                userId: currentUser._id,
-                score: calculateScore(),
-                answers: userAnswers,
-                timetaken: calculateTimeTaken().toString(),
-                attempt: parseInt(result.attempt)+1,
-                submitted_date: date_submit(),
+                const createdResult = await resultsClient.createResults(qid as string, currentUser._id, newResult);
+                dispatch(addResults(createdResult));
+            } else {
+                newResult = {
+                    ...result,
+                    score: calculateScore(),
+                    answers: userAnswers,
+                    timetaken: calculateTimeTaken().toString(),
+                    attempt: parseInt(result.attempt) + 1,
+                    submitted_date: date_submit(),
+                };
+                await resultsClient.updateResults(newResult);
+                dispatch(addResults(newResult));
             }
-            await resultsClient.updateResults(updatedResult);
-            dispatch(addResults(updatedResult));
+    
+            await Promise.all([
+                fetchResults(),
+                fetchEnrollments(),
+                fetchAssignments(),
+                fetchAssignmentsResults(),
+                fetchQuizzes(),
+            ]);
+    
+            const enrollment = enrollments.find(
+                (e: any) => e.course === cid && e.user === currentUser._id
+            );
+            if (enrollment) {
+                const newCourseGrade = await calculateGrade(currentUser._id, newResult);
+                const updatedEnrollment = { ...enrollment, courseGrade: newCourseGrade };
+                await enrollmentsClient.updateEnrollment(updatedEnrollment);
+                dispatch(updateEnrollment(updatedEnrollment));
+            }
+    
+            navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizResults`);
+        } catch (error) {
+            console.error("Error submitting quiz:", error);
         }
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizResults`)
-
-    }
-
+    };
+    
 
         
     const handleNext = () => {
@@ -187,8 +298,6 @@ export default function TakeQuiz() {
     };
 
     useEffect(() => {
-
-
         const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course == cid);
         if (quiz && quiz.time_limit) {
             setQuizStartTime(Date.now());
@@ -209,7 +318,19 @@ export default function TakeQuiz() {
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
 //----------------------------------------------------------------------------------------------------------//
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            await Promise.all([fetchEnrollments(), fetchResults(), fetchAssignments(), fetchAssignmentsResults(),fetchQuizzes()]);
+            setIsLoading(false);
+        };
+        fetchData();
+    }, []);
 
+    if (isLoading) {
+        return <div>Loading...</div>; 
+        }
+        
     return (
         <div className="container-fluid" id="wd-take-quiz">
 

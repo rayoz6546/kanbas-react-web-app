@@ -15,6 +15,7 @@ import * as modulesClient from "./client";
 export default function ModuleControlButtons({
   moduleId,
   deleteModule,
+  setIsModuleEditing,
   editModule,
   openAddLessonDialog,
   allIconsVisible,
@@ -26,6 +27,7 @@ export default function ModuleControlButtons({
   editModule: (moduleId: string) => void;
   openAddLessonDialog: (moduleId: string) => void; 
   allIconsVisible: any;
+  setIsModuleEditing:any;
   visibleIcons:any,
   toggleIcons: (Id:any)=>void
 }) {
@@ -48,7 +50,7 @@ export default function ModuleControlButtons({
       {isVisible && (
         <>
           <FaPencil
-            onClick={() => editModule(moduleId)}
+            onClick={() => {editModule(moduleId); setIsModuleEditing((prev:any)=>!prev)}}
             className="text-primary me-3"
             style={{ cursor: "pointer" }}
           />

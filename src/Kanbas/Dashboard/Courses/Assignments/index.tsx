@@ -24,6 +24,7 @@ import { CiNoWaitingSign } from "react-icons/ci";
 import { IoEllipsisVertical } from "react-icons/io5";
 import * as filesClient from "../filesClient";
 import { setFiles } from "../filesReducer";
+import ProtectedContentAdmin from "../../../Account/ProtectedContentAdmin";
 
 export default function Assignments() {
     const { cid } = useParams()
@@ -32,6 +33,7 @@ export default function Assignments() {
     const navigate = useNavigate();
     const [assignmentToDelete, setAssignmentToDelete] = useState("")
 
+    const [isLoading, setIsLoading] = useState(true); 
     const [visibleIcons, setVisibleIcons] = useState<Record<string, boolean>>({});
     const toggleAllIcons = () => {
 
@@ -55,9 +57,7 @@ export default function Assignments() {
       const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
       dispatch(setAssignments(assignments));
     };
-    useEffect(() => {
-      fetchAssignments();
-    }, []);
+
   
     
     const removeAssignment = async (assignmentId: string) => {
@@ -98,9 +98,7 @@ export default function Assignments() {
 };
   const [collapsed, setCollapsed] = useState(false);
 
-  useEffect(() => {
-      fetchFiles();
-  }, []);
+
 
   const toggleCollapseAll = () => {
     setCollapsed(!collapsed);
@@ -134,10 +132,22 @@ export default function Assignments() {
           return "Not Available Until"
 
       }
-      
-
+  
   };
 
+  useEffect(() => {
+    // Fetch data and set loading state
+    const fetchData = async () => {
+      setIsLoading(true);
+      await Promise.all([fetchFiles(), fetchAssignments()]);
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Display loading indicator
+  }
 
     return (
       <>
@@ -160,7 +170,8 @@ export default function Assignments() {
                         <FiMoreVertical /></button>
                 </div>
                 <div className="col">
-                <button id="wd-add-assignment-btn" className="btn btn-lg btn-danger fs-6 rounded-1 float-end"
+     
+                <button id="wd-add-assignment-btn" className="btn btn-lg btn-primary fs-6 rounded-1 float-end"
                 onClick={() => navigate(`/Kanbas/Courses/${cid}/Assignments/new`)}>
                 <FaPlus className="position-relative me-2" style={{ bottom: "1px"}} />
                 Assignment</button>
@@ -312,6 +323,9 @@ export default function Assignments() {
       
       </ProtectedContent>
 
+
+
+
       <ProtectedContentEnrollment>
       <div id="wd-assignments" className="p-3 ">
         <div className="row mb-5">
@@ -366,6 +380,63 @@ export default function Assignments() {
         </div>
         </div>
       </ProtectedContentEnrollment>
+
+
+
+      <ProtectedContentAdmin>
+      <div id="wd-assignments" className="p-3 ">
+        <div className="row mb-5">
+            <div className="col mb-3">
+                        <button
+                        id="wd-collapse-all"
+                        className="btn btn-lg btn-secondary fs-6 me-1 float-end"
+                        onClick={toggleCollapseAll}
+                      >
+                        {collapsed ? "Uncollapse All" : "Collapse All"}
+                      </button>
+                    </div>
+                    <hr />
+                
+
+
+          <div className="row">
+              <ul className="list-group rounded-0">
+              <li className="wd-assignment list-group-item p-0 mb-5 fs-5 border-gray">
+        
+                <div className="wd-title p-3 ps-2 bg-secondary"><BsGripVertical className="me-2 fs-3" /><IoMdArrowDropdown className="me-2"/>ASSIGNMENTS</div>
+                <ul id="wd-assignment-list" className="wd-assignment list-group rounded-0">
+                {!collapsed && assignments
+                .map((assignment: any) =>(
+                  <>
+                  {assignment.published && 
+                  
+                  <li className="wd-assignments list-group-item p-3 ps-1 d-flex align-items-center">
+                    <div className="d-flex align-items-center">
+                        <MdAssignmentAdd className="ms-2 me-3 fs-3" style={{color:"darkblue"}}/>
+
+                      <div className={`wd-${assignment._id}`}>
+                      <a className="wd-assignment-link" href={`#/Kanbas/Courses/${cid}/Assignments/take/${assignment._id}`} style={{fontWeight:'bold'}}>{`${assignment.title}`}</a>
+
+                      <br />
+
+                      {calculateAvailability(assignment.due_date, assignment.available_from, assignment.until)==="Available" ? <span><strong>Available </strong>| </span> : null }
+                      {calculateAvailability(assignment.due_date, assignment.available_from, assignment.until)==="Not Available Until" ? <span><strong>Not Available Until</strong> {`${assignment.available_from.toString().split("T")[0]}`} | </span> : null }
+                      {calculateAvailability(assignment.due_date, assignment.available_from, assignment.until)==="Closed" ? <span><strong>Closed </strong>| </span> : null }
+                      <strong>Due</strong> {`${assignment.due_date.toString().split("T")[0]}`} | {(assignment.points!=="") ? `${assignment.points}` : "-"} pts
+                      </div>
+                      
+                    </div></li>
+                }</>
+                ))
+                }</ul>
+
+          </li>
+          </ul>
+          </div>
+
+        </div>
+        </div>
+      </ProtectedContentAdmin>
       </>
   );}
   

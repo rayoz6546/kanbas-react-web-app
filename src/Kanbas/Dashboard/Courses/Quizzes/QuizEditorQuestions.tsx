@@ -1,14 +1,15 @@
 import { FaPlus } from "react-icons/fa6";
 import { Link, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Editor from 'react-simple-wysiwyg';
 import { FaTrash } from "react-icons/fa";
 import { BsGripVertical } from "react-icons/bs";
 import { FaPencil } from "react-icons/fa6";
-
-export default function QuizEditorQuestions({quiz, setQuizQuestions,questionsToDelete, questionsToAdd, questionsToUpdate, setNewQuizQuestions,handleSaveQuestions,setQuestionsToDelete, setQuestionsToAdd, setQuestionsToUpdate, handleCancelQuestions,stagedQuestions, setStagedQuestions}:
-    {quiz:any, setQuizQuestions:any, setNewQuizQuestions:any,questionsToDelete:any, questionsToAdd:any, questionsToUpdate:any, setQuestionsToDelete:any, setQuestionsToAdd:any, setQuestionsToUpdate:any, handleSaveQuestions:()=>void,handleCancelQuestions:()=>void
+import { setQuizzes } from "./quizzesReducer";
+import * as coursesClient from "../client";
+export default function QuizEditorQuestions({ setQuizQuestions,questionsToDelete, questionsToAdd, questionsToUpdate, setNewQuizQuestions,handleSaveQuestions,setQuestionsToDelete, setQuestionsToAdd, setQuestionsToUpdate, handleCancelQuestions,stagedQuestions, setStagedQuestions}:
+    { setQuizQuestions:any, setNewQuizQuestions:any,questionsToDelete:any, questionsToAdd:any, questionsToUpdate:any, setQuestionsToDelete:any, setQuestionsToAdd:any, setQuestionsToUpdate:any, handleSaveQuestions:()=>void,handleCancelQuestions:()=>void
         stagedQuestions:any, setStagedQuestions:any
     }) {
     const { cid, qid } = useParams()
@@ -145,6 +146,30 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,questionsToD
 
         setStagedQuestions((prev:any) => prev.filter((q:any) => q._id !== questionId));
     };
+    const {quizzes} = useSelector((state: any) => state.quizzesReducer);
+    const quiz = quizzes.find((q:any) => q._id === qid && q.course === cid);
+    const dispatch = useDispatch();
+
+    const fetchQuizzes = async () => {
+        const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
+        dispatch(setQuizzes(quizzes));
+
+        };
+          useEffect(() => {
+            if (!quiz) {
+                fetchQuizzes();
+            } else {
+                setStagedQuestions(stagedQuestions);
+
+            }
+        }, [
+            dispatch,
+            quiz,
+            qid,
+            setStagedQuestions,
+            stagedQuestions
+   
+        ]);
 
     
     return (
@@ -432,7 +457,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,questionsToD
 
                                 <button className="btn btn-secondary rounded-1 me-2" type="submit" onClick={() => { resetQuestion() ;setShowQuestionInput(false); setCurrentEditingQuestionId(null)}}>Cancel</button>
 
-                                <button className="btn btn-danger rounded-1" type="submit"
+                                <button className="btn btn-primary rounded-1" type="submit"
                                     onClick={
                                         handleAddOrUpdateQuestion
 
@@ -453,7 +478,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,questionsToD
                             <button className="btn btn-secondary rounded-1 me-2" type="submit" onClick={()=>{resetQuestion();handleCancelQuestions()}} >Cancel</button>
                         </Link>
                         <Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`}>
-                            <button className="btn btn-danger rounded-1" type="submit"
+                            <button className="btn btn-primary rounded-1" type="submit"
                             onClick={()=>{resetQuestion();handleSaveQuestions()}}>Save</button>
                         </Link>
                     </div>

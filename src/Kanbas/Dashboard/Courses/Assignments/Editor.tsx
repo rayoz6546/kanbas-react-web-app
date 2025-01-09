@@ -1,11 +1,10 @@
 import { TbPointFilled } from "react-icons/tb";
 import { MdDateRange } from "react-icons/md";
 import { useLocation, useParams } from "react-router";
-import * as db from "../../../Database";
 import { Link , useNavigate} from "react-router-dom";
 import { SetStateAction, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addAssignment, updateAssignment } from "./reducer";
+import { addAssignment, setAssignments, updateAssignment } from "./reducer";
 import * as coursesClient from "../client";
 import * as assignmentsClient from "../Assignments/client"
 import * as modulesClient from "../Modules/client";
@@ -15,18 +14,17 @@ import ProtectedContent from "../../../Account/ProtectedContent";
 import StudentViewButton from "../Quizzes/StudentViewButton";
 import { useViewContext } from "../Quizzes/View";
 import { CgDanger } from "react-icons/cg";
-
+import { IoMdClose } from "react-icons/io";
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
-
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const { files } = useSelector((state: any) => state.filesReducer);
 
-
-
   const assignment = assignments.find((a: any) => a._id === aid);
 
+  const [isLoading, setIsLoading] = useState(true);
 
 
   const [assignmentName, setAssignmentName] = useState(assignment ? assignment.title : "");
@@ -40,7 +38,20 @@ export default function AssignmentEditor() {
   const [assignmentPublished, setAssignmentPublished] = useState(assignment ? assignment.published : false);
   const [file, setFile] = useState(assignment ? assignment.file : "");
   const [assignmentFile, setAssignmentFile] = useState<File | null>(null);
-
+  useEffect(() => {
+    if (assignment) {
+        setAssignmentName(assignment.title);
+        setAssignmentDescription(assignment.description);
+        setAssignmentPoints(assignment.points);
+        setAssignmentDue(assignment.due_date);
+        setAssignmentFrom(assignment.available_from);
+        setAssignmentUntil(assignment.until);
+        setAssignmentAttempts(assignment.attempts);
+        setAssignmentPercentage(assignment.percentage);
+        setAssignmentPublished(assignment.published);
+        setFile(assignment.file); 
+    }
+}, [assignment]);
   const [loading, setLoading] = useState(false);
   const file_ass = files.find((f:any)=> f.itemId===aid) 
 
@@ -67,29 +78,49 @@ export default function AssignmentEditor() {
         console.error("Error fetching files:", error);
     }
 };
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); 
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+
+        if (file) {
+            if (file.size > MAX_FILE_SIZE) {
+                setErrorMessage("File size must be less than 2MB.");
+                setAssignmentFile(null); 
+            } else {
+                setErrorMessage(null);
+                setAssignmentFile(file); 
+            }
+        }
+    };
 
 
-  useEffect(() => {
-      fetchFiles();
-  }, []);
+  const [fileToDelete, setFileToDelete] = useState("")
 
-  const save = async () => {
+  const handleDeleteFile = async () => {
+
+    if (file_ass) {
+    await filesClient.deleteFile(file_ass._id);
+    dispatch(deleteFile(file_ass._id));
+    }
+  }
+
+  const save = async (published:boolean) => {
     if (loading) return; // Prevent duplicate saves
     setLoading(true); // Disable the button
     let fileId = file;
-    if (assignmentFile) {
-        if (file_ass) {
-            await filesClient.deleteFile(file_ass._id);
-            dispatch(deleteFile(file_ass._id));
-        }
-
-        // Upload the new file
-        const fileUploadResponse = await filesClient.uploadFile(assignmentFile, aid as string);
-        fileId = fileUploadResponse.fileId;
-        dispatch(addFile(fileUploadResponse));
-    }
     if (aid) {
-        // Update the assignment
+        if (assignmentFile) {
+            if (file_ass) {
+                await filesClient.deleteFile(file_ass._id);
+                dispatch(deleteFile(file_ass._id));
+            }
+    
+            // Upload the new file
+            const fileUploadResponse = await filesClient.uploadFile(assignmentFile, aid as string);
+            fileId = fileUploadResponse.fileId;
+            dispatch(addFile(fileUploadResponse));
+        }
         const updatedAssignment = {
             _id: assignment._id,
             title: assignmentName,
@@ -99,7 +130,7 @@ export default function AssignmentEditor() {
             available_from: assignmentFrom,
             until: assignmentUntil,
             description: assignmentDescription,
-            published: assignmentPublished  ,
+            published: published  ,
             file: "",
             attempts: assignmentAttempts,
             percentage: assignmentPercentage,
@@ -115,7 +146,7 @@ export default function AssignmentEditor() {
             available_from: assignmentFrom,
             until: assignmentUntil,
             description: assignmentDescription,
-            published: assignmentPublished ,
+            published: published,
             file:"",
             attempts: assignmentAttempts,
             percentage: assignmentPercentage,
@@ -134,13 +165,68 @@ export default function AssignmentEditor() {
             await assignmentsClient.updateAssignment(newerAssignment);
             dispatch(updateAssignment(newerAssignment));
         }
+
     }
 
-
+    if (fileToDelete!=="" && !assignmentFile) {
+        handleDeleteFile()
+    }
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
 };
 
-const { isStudentView, toggleView } = useViewContext();
+    const fetchAssignments = async () => {
+        const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(assignments));
+    };
+
+
+    const { isStudentView, toggleView } = useViewContext();
+
+    const calculateAvailability = (dueDate: any, availableFrom: any, availableUntil: any) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+  
+  
+        const dueDateObj = dueDate instanceof Date ? dueDate : new Date(dueDate);
+        const availableFromObj = availableFrom instanceof Date ? availableFrom : new Date(availableFrom);
+        const availableUntilObj = availableUntil instanceof Date ? availableUntil : new Date(availableUntil);
+  
+  
+        dueDateObj.setHours(0, 0, 0, 0);
+        availableFromObj.setHours(0, 0, 0, 0);
+        availableUntilObj.setHours(0, 0, 0, 0);
+  
+        if (today > availableUntilObj) {
+            return "Closed"
+  
+        }
+  
+        if (today > availableFromObj && today < availableUntilObj) {
+            return "Available"
+  
+        }
+  
+        if (today < availableFromObj) {
+            return "Not Available Until"
+  
+        }
+    
+    };
+
+    useEffect(() => {
+        // Fetch data and set loading state
+        const fetchData = async () => {
+          setIsLoading(true);
+          await Promise.all([fetchFiles(), fetchAssignments(),]);
+          setIsLoading(false);
+        };
+        fetchData();
+      }, []);
+
+      if (isLoading) {
+        return <div>Loading...</div>; // Display loading indicator
+      }
+      
   return (
     <>
 
@@ -152,6 +238,7 @@ const { isStudentView, toggleView } = useViewContext();
 
       {isStudentView ? (
       <div className="container-fluid">
+
     
           <div id="wd-assignments-editor" className="p-5 row">
               <div className="row mb-1 p-1">
@@ -189,20 +276,25 @@ const { isStudentView, toggleView } = useViewContext();
                   <input
                       type="file"
 
-                      onChange={(e) => setAssignmentFile(e.target.files?.[0] || null)}
+                      onChange={handleFileChange}
                       className="form-control mb-2"
                   />
  
-
-                {file_ass ? (
+            {errorMessage && (
+                    <p className="text-danger" style={{ fontSize: "0.875rem" }}>{errorMessage}</p>
+                        )}
+                
+                {file_ass && fileToDelete==="" && !errorMessage ? (
                     <p className="text-muted">
                         {file_ass.originalName
-                            ? `Current file: ${file_ass.originalName}`
+                            ? <>Current file: {`${file_ass.originalName}`} <button className="btn btn-light" onClick={()=>setFileToDelete(file_ass)}><IoMdClose className="text-dark fs-5"/></button></> 
                             : "No file uploaded"}
                     </p>
                 ) : (
                     <p className="text-muted">No file uploaded</p>
                 )}
+
+            
               </div>
 
 
@@ -280,10 +372,16 @@ const { isStudentView, toggleView } = useViewContext();
                   <div className="col">
                       <hr />
                       <div className="col">
-                          <button onClick={save} className="btn btn-danger float-end rounded-1" type="submit" disabled={loading}> 
+                          <button onClick={()=>save(true)} className="btn btn-primary float-end rounded-1" type="submit" disabled={loading}> 
+                              Save & Publish
+                          </button>
+                      </div>
+                      <div className="col">
+                          <button onClick={()=>save(false)} className="btn btn-primary float-end me-2 rounded-1" type="submit" disabled={loading}> 
                               Save
                           </button>
                       </div>
+
                       <div className="col">
                           <Link to={`/Kanbas/Courses/${cid}/Assignments`}>
                               <button className="btn btn-secondary float-end me-2 rounded-1" type="submit">
@@ -320,7 +418,7 @@ const { isStudentView, toggleView } = useViewContext();
                                       <div className="details-row">
                                           <div><strong>Due</strong>{`${a.due_date}`.toString().split("T")[0]}</div>
                                           <div><strong>Points</strong>{a.points}</div>
-                                          <div><strong>Available</strong>{`${a.available_from}`.toString().split("T")[0]} - {`${a.until}`.toString().split("T")[0]}</div>
+                                          <div><strong>Available</strong>{`${a.available_from}`.toString().split("T")[0]}</div>
                                           
                                       </div>
                                   
@@ -331,6 +429,9 @@ const { isStudentView, toggleView } = useViewContext();
                       <hr />
                   </div>
         
+
+                {calculateAvailability(assignment.due_date, assignment.available_from, assignment.until)==="Available" &&
+                    <>
                     <div className="row ms-1">
                         {a.description}
         
@@ -352,7 +453,26 @@ const { isStudentView, toggleView } = useViewContext();
         
                     </div>): null}
 
+                </>}
 
+                {calculateAvailability(assignment.due_date, assignment.available_from, assignment.until)==="Not Available Until" &&
+                                    <>
+                                    <div className="row ms-1">
+                                        This assignment is locked until {assignment.available_from.toString().split("T")[0]}
+                        
+                                    </div>
+
+
+                </>}
+                {calculateAvailability(assignment.due_date, assignment.available_from, assignment.until)==="Closed" &&
+                                    <>
+                                    <div className="row ms-1">
+                                        This assignment is closed
+                        
+                                    </div>
+
+
+                </>}
 
                     
                     

@@ -3,8 +3,10 @@ import Editor from 'react-simple-wysiwyg';
 import { useEffect, useState } from 'react';
 import { MdDateRange } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setQuizzes } from "./quizzesReducer";
 
-
+import * as coursesClient from "../client";
 
 
 export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, setQuizAvailableUntil, setQuizDueDate,setQuizScore,
@@ -69,9 +71,68 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
 
     }, [setQuizDueDate, setQuizAvailableFrom, setQuizAvailableUntil]);
 
+    const quiz = quizzes.find((q:any) => q._id === qid && q.course === cid);
+    const dispatch = useDispatch()
+   const fetchQuizzes = async () => {
+        const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
+        dispatch(setQuizzes(quizzes));
 
-
-
+      };
+      useEffect(() => {
+        if (!quiz) {
+            fetchQuizzes();
+        } else {
+            setNewQuizTitle(quiz.title || "New Quiz");
+            setNewQuizDescription(quiz.description || "")
+            setNewQuizAvailableFrom(quiz.available_from || "");
+            setNewQuizAvailableUntil(quiz.available_until || "");
+            setNewQuizDueDate(quiz.due_date || "");
+            setNewQuizPoints(quiz.points || "0");
+            setNewQuizType(quiz.quiz_type || "Graded Quiz");
+            setNewQuizShuffle(quiz.shuffle_answers || true);
+            setNewQuizMultipleAttempts(quiz.multiple_attempts || false);
+            setNewQuizShowCorrectAnswers(quiz.show_correct_answers || true);
+            setShowCorrectAnswersWhen(
+                (quiz.show_correct_answers_when==="" ? "Immediately" : quiz.show_correct_answers_when) ?? "Immediately"
+            );
+            setNewQuizAccessCode(quiz.access_code || "");
+            setNewQuizOneQuestionAtATime(quiz.one_question_at_a_time ?? true);
+            setNewQuizTimeLimit(quiz.time_limit || "20");
+            setNewQuizNumberAttempts(quiz.number_attempts || "1");
+            setNewQuizAssignmentGroup(quiz.assignment_group || "QUIZZES");
+            setNewQuizNumberQuestions(quiz.number_questions || "0");
+            setNewQuizScore(quiz.score || "");
+            setNewQuizWebcamRequired(quiz.webcam_required || false);
+            setNewQuizLockQuestions(quiz.lock_questions_after_answering || false);
+            setNewPublished(quiz.published || false);
+            setNewPercentage(quiz.percentage || null);
+        }
+    }, [
+        dispatch,
+        quiz,
+        qid,
+        setNewQuizTitle,
+        setNewQuizAvailableFrom,
+        setNewQuizAvailableUntil,
+        setNewQuizDueDate,
+        setNewQuizPoints,
+        setNewQuizType,
+        setNewQuizShuffle,
+        setNewQuizMultipleAttempts,
+        setNewQuizShowCorrectAnswers,
+        setShowCorrectAnswersWhen,
+        setNewQuizAccessCode,
+        setNewQuizOneQuestionAtATime,
+        setNewQuizTimeLimit,
+        setNewQuizNumberAttempts,
+        setNewQuizAssignmentGroup,
+        setNewQuizNumberQuestions,
+        setNewQuizScore,
+        setNewQuizWebcamRequired,
+        setNewQuizLockQuestions,
+        setNewPublished,
+        setNewPercentage,
+    ]);
     return (
         <div className="container-fluid">
 
@@ -158,7 +219,7 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                                             <li className="list-group-item border-0">
                                                 <div className="row mb-3">
                                                     <div className="col"><input type="checkbox" name="wd-quiz-editor-show" id="wd-quiz-editor-show" className="form-check-input me-2"
-                                                    checked = {setQuizShowCorrectAnswers} onChange={(e) => setNewQuizShowCorrectAnswers((prev: any) => !prev)}/>
+                                                    checked = {setQuizShowCorrectAnswers} onChange={(e) => setNewQuizShowCorrectAnswers(e.target.checked)}/>
                                                         <label htmlFor="wd-quiz-editor-show">Show Correct Answers</label></div>
                                                 </div>
 
@@ -168,16 +229,17 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                                                     <select
                                                         id="wd-quiz-editor-show-when"
                                                         className="form-select"
-                                                        value={showCorrectAnswersWhen}
-                                                        onChange={(e) => {setShowCorrectAnswersWhen(e.target.value)
-                                                        }}
+                                                        value={showCorrectAnswersWhen} // Tie value to state
+                                                        onChange={(e) => setShowCorrectAnswersWhen(e.target.value)} // Update state on change
                                                     >
                                                         <option value="Immediately">Immediately</option>
                                                         <option value="Choose Date">Choose Date</option>
-                                                        {showCorrectAnswersWhen && (showCorrectAnswersWhen !== "Choose Date" && showCorrectAnswersWhen !== "Immediately") && (
-                                                        <option value={showCorrectAnswersWhen}>{showCorrectAnswersWhen}</option> 
-                                                    )}
-                                                    </select>
+                                                        {/* Include a fallback option for any existing value */}
+                                                        {showCorrectAnswersWhen &&
+                                                            !["Immediately", "Choose Date"].includes(showCorrectAnswersWhen) && (
+                                                                <option value={showCorrectAnswersWhen}>{showCorrectAnswersWhen}</option>
+                                                            )}
+                                                        </select>
 
                                                     {showCorrectAnswersWhen === "Choose Date" && (
                                                         <div className="input-group mt-2">
@@ -265,12 +327,9 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                 <div className="row mt-2 mb-4">
                     <div className="col d-flex justify-content-center">
                             <button className="btn btn-secondary rounded-1 me-2" type="submit" onClick={()=> {handleCancelQuiz()}}>Cancel</button>
-                        {/* <Link to={`/Kanbas/Courses/${cid}/Quizzes/${quiz_id}`}> */}
-                            <button className="btn btn-danger rounded-1 me-2" type="submit" onClick = {()=>{setNewPublished(false); handleUpdateQuiz(false)}}>Save</button>
-                        {/* </Link> */}
-                        {/* <Link to={`/Kanbas/Courses/${cid}/Quizzes`}> */}
-                            <button className="btn btn-danger rounded-1" type="submit" onClick = {()=>{setNewPublished(true); handleUpdateQuiz(true)}}>Save & Publish</button>
-                        {/* </Link> */}
+                            <button className="btn btn-primary rounded-1 me-2" type="submit" onClick = {()=>{setNewPublished(false); handleUpdateQuiz(false)}}>Save</button>
+                            <button className="btn btn-primary rounded-1" type="submit" onClick = {()=>{setNewPublished(true); handleUpdateQuiz(true)}}>Save & Publish</button>
+
                     </div>
                 </div>
 

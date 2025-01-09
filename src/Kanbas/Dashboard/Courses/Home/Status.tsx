@@ -8,33 +8,17 @@ import { TfiAnnouncement } from "react-icons/tfi";
 import { IoIosNotifications } from "react-icons/io";
 import ProtectedContent from "../../../Account/ProtectedContent";
 import { MdEmail } from "react-icons/md";
+import { useNavigate, useParams } from "react-router";
 
 export default function CourseStatus({isStudentView}:{isStudentView:Boolean}) {
+  const navigate = useNavigate()
+  const {cid} = useParams()
   return (
     <div id="wd-course-status" style={{ width: "300px" }}>
       <h2>Course Status</h2>
       {isStudentView ? (
         <>
       
-      <ProtectedContent>
-      <div className="d-flex">
-        <div className="w-50 pe-1">
-          <button className="btn btn-lg btn-secondary w-100 text-nowrap ">
-            <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublish </button>
-        </div>
-        <div className="w-50">
-          <button className="btn btn-lg btn-success w-100">
-            <FaCheckCircle className="me-2 fs-5" /> Publish </button>
-        </div>
-      </div><br />
-      
-
-      <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <BiImport className="me-2 fs-5" /> Import Existing Content </button>
-
-
-
-        </ProtectedContent>
 
         <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
         <TfiAnnouncement className="me-2 fs-5" /> Announcements </button>
@@ -42,8 +26,11 @@ export default function CourseStatus({isStudentView}:{isStudentView:Boolean}) {
         <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
         <IoIosNotifications className="me-2 fs-5" /> View Course Notifications </button>
 
-        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
-        <BiSolidBarChartAlt2 className="me-2 fs-5" /> Vew Analytics </button>
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start" onClick={()=>navigate(`/Kanbas/Courses/${cid}/Analytics`)}>
+        <BiSolidBarChartAlt2 className="me-2 fs-5"/> Vew Analytics </button>
+
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start" onClick = {() => window.open("https://www.microsoft.com/en-us/microsoft-365/outlook/email-and-calendar-software-microsoft-outlook","_blank")}>
+        <MdEmail className="me-2 fs-5" /> Outlook </button>
 
         </>
 ) : 
@@ -56,10 +43,10 @@ export default function CourseStatus({isStudentView}:{isStudentView:Boolean}) {
         <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
         <IoIosNotifications className="me-2 fs-5" /> View Course Notifications </button>
 
-        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start"  onClick={()=>navigate(`/Kanbas/Courses/${cid}/Analytics`)}>
         <BiSolidBarChartAlt2 className="me-2 fs-5" /> Vew Analytics </button>
 
-        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start">
+        <button className="btn btn-lg btn-secondary w-100 mt-1 text-start" onClick = {() => window.open("https://www.microsoft.com/en-us/microsoft-365/outlook/email-and-calendar-software-microsoft-outlook","_blank")}>
         <MdEmail className="me-2 fs-5" /> Outlook </button></>}
 
     </div>

@@ -139,7 +139,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                             </div>
 
                             <div className="col text-nowrap">
-                                <button id="wd-add-quiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 float-end me-1"
+                                <button id="wd-add-quiz-btn" className="btn btn-lg btn-primary fs-6 rounded-1 float-end me-1"
                                     onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizId}/Editor/Details`);}}>
                                         
                                     <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />

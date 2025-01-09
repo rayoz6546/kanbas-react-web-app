@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { setResults } from "../Quizzes/resultsReducer";
@@ -36,11 +36,21 @@ export default function StudentQuizResults() {
         dispatch(setQuizzes(quizzes));
         };
 
+ 
+        const [isLoading, setIsLoading] = useState(true);
+
         useEffect(() => {
-    
-            fetchResults()
-            fetchQuizzes()
+            const fetchData = async () => {
+                await fetchResults();
+                await fetchQuizzes();
+                setIsLoading(false); 
+            };
+            fetchData();
         }, []);
+
+    if (isLoading) {
+        return <div>Loading...</div>; 
+    }
     return (
         <div className="container-fluid" id="wd-take-quiz">
             

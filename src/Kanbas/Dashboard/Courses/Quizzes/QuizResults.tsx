@@ -53,10 +53,21 @@ export default function QuizResults() {
         fetchQuizzes()
     }, []);
 
+    if (!result ) {
+        return <div>Loading...</div>; 
+    }
+
+    if (!quiz ) {
+        return <div>Loading...</div>; 
+    }
+
+
+
+
     return (
         <div className="container-fluid" id="wd-take-quiz">
             
-
+          
                 <div className="row d-flex">
                 <div className="col-8 me-5 ">
                 <div className="row mb-2">

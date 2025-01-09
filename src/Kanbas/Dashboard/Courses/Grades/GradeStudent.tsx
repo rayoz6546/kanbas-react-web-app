@@ -11,20 +11,27 @@ import { addAssignmentResult, setAssignmentResults, updateAssignmentResult } fro
 import * as filesClient from "../Assignments/studentFileClient";
 import { setStudentFiles } from "../Assignments/studentFileReducer";
 import { setAssignments } from "../Assignments/reducer";
-import * as gradesClient from "./client";
-import { setGrades } from "./reducer";
-
+import { setUsers } from "../../../Account/usersReducer";
+import * as enrollmentsClient from "../../Enrollment/client";
+import { setEnrollments, updateEnrollment } from "../../Enrollment/reducer";
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 export default function GradeStudent() { 
     const { cid, uid } = useParams();
     const {results} = useSelector((state:any)=> state.resultsReducer)
     const {quizzes} = useSelector((state:any) => state.quizzesReducer)
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const [users, setUsers] = useState<any[]>([]); 
-    const user = users && users.find((u:any)=> u._id===uid)
+ 
     const {assignmentResults} = useSelector((state:any)=> state.assignmentsResultsReducer)
-    const { grades } = useSelector((state:any)=> state.gradesReducer)
+    const { users } = useSelector((state:any)=> state.usersReducer)
+    const user = users && users.find((u:any)=> u._id===uid)
+    const {enrollments} = useSelector((state:any)=>state.enrollmentsReducer)
+
+    const fetchEnrollments = async () => {
+        const enrollments = await enrollmentsClient.findAllEnrollments()
+        dispatch(setEnrollments(enrollments))
+        };
     
+
     const [viewSubmission, setViewSubmission] = useState<boolean | string>(false);
     const [viewAllAssignments, setViewAllAssignments] = useState(false)
     const [viewAllQuizzes, setViewAllQuizzes] = useState(false)
@@ -33,10 +40,7 @@ export default function GradeStudent() {
     const [assignmentGrade, setAssignmentGrade] = useState(0)
     const dispatch = useDispatch()
 
-    const fetchGrades = async () => {
-        const grades = await gradesClient.fetchCourseGrades(cid as string)
-        dispatch(setGrades(grades))
-    }
+
 
     const fetchResults = async () => {
             const results = await resultsClient.fetchResultsByUser(cid as string, uid as string)
@@ -52,8 +56,8 @@ export default function GradeStudent() {
 
     const fetchUsers = async () => {
         const users = await usersClient.findUsersForCourse(cid as string)
-        setUsers(users)
-        // dispatch(setQuizzes(quizzes));
+        dispatch(setUsers(users))
+
 
         };
 
@@ -68,16 +72,6 @@ export default function GradeStudent() {
         dispatch(setAssignments(assignments))
     }
 
-    useEffect(() => {
-        fetchQuizzes()
-        fetchUsers()
-        fetchAssignments()
-        fetchAssignmentsResults()
-        }, []);
-
-    useEffect(() => {
-        fetchResults()
-    }, [results,dispatch]);
 
 
     const handleViewSubmissionClick = (id: string) => {
@@ -97,10 +91,64 @@ export default function GradeStudent() {
         dispatch(setStudentFiles(fetchedFiles));
 
     };
+
+    const calculateGrade = async (userId: string, newResult: any = null) => {
+        const updatedResults = newResult
+            ? [...results.filter((r: any) => r._id !== newResult._id), newResult]
+            : results;
+        
+        const assignmentsResults = await assignmentsResultsClient.fetchAllAssignmentsResultsByUser(userId);
+        
+        let totalWeightedScore = 0;
+        let totalPercentage = 0;
     
-      useEffect(() => {
-          fetchFiles();
-      }, []);
+        const latestQuizResults = updatedResults.reduce((acc: any, result: any) => {
+            acc[result.quizId] = result; 
+            return acc;
+        }, {});
+    
+        const latestAssignmentResults = assignmentsResults.reduce((acc: any, result: any) => {
+            acc[result.assignmentId] = result; 
+            return acc;
+        }, {});
+    
+        const quizMap = quizzes.reduce((acc: any, quiz: any) => {
+            acc[quiz._id] = quiz;
+            return acc;
+        }, {});
+    
+        const assignmentMap = assignments.reduce((acc: any, assignment: any) => {
+            acc[assignment._id] = assignment;
+            return acc;
+        }, {});
+    
+        Object.values(latestQuizResults).forEach((result: any) => {
+            const quiz = quizMap[result.quizId];
+            if (quiz && quiz.percentage && quiz.points) {
+                const weightedScore = (result.score / quiz.points) * quiz.percentage;
+                totalWeightedScore += weightedScore;
+                totalPercentage += quiz.percentage;
+            }
+        });
+    
+        Object.values(latestAssignmentResults).forEach((result: any) => {
+            const assignment = assignmentMap[result.assignmentId];
+            if (assignment && assignment.percentage && assignment.points) {
+                const weightedScore = (result.score / assignment.points) * assignment.percentage;
+                totalWeightedScore += weightedScore;
+                totalPercentage += assignment.percentage;
+            }
+        });
+    
+        if (totalPercentage > 100) {
+            totalWeightedScore = (totalWeightedScore / totalPercentage) * 100;
+        }
+    
+        return Number(totalWeightedScore.toFixed(2));
+    };
+    
+    
+
 
     const navigate = useNavigate()
 
@@ -109,6 +157,11 @@ export default function GradeStudent() {
         const updatedResult = {...result, score:score}
         await resultsClient.updateResults(updatedResult);
         dispatch(updateResults(updatedResult))
+        const enrollment = enrollments.find((e:any)=>e.course === cid && e.user === uid)
+        const newCourseGrade = await calculateGrade(uid as string)
+        const updatedEnrollment = {...enrollment, courseGrade: newCourseGrade}
+        await enrollmentsClient.updateEnrollment(updatedEnrollment)
+        dispatch(updateEnrollment(updatedEnrollment))
 
     }
 
@@ -117,13 +170,40 @@ export default function GradeStudent() {
         const updatedResult = {...result, score:score}
         await assignmentsResultsClient.updateAssignmentResult(updatedResult)
         dispatch(updateAssignmentResult(updatedResult))
-       
+        const enrollment = enrollments.find((e:any)=>e.course === cid && e.user === uid)
+        const newCourseGrade = await calculateGrade(uid as string)
+        const updatedEnrollment = {...enrollment, courseGrade: newCourseGrade}
+        await enrollmentsClient.updateEnrollment(updatedEnrollment)
+        dispatch(updateEnrollment(updatedEnrollment))
 
     }
 
+    const [isLoading, setIsLoading] = useState(true);
+
+
+
+    useEffect(() => {
+        // Fetch data and set loading state
+        const fetchData = async () => {
+            setIsLoading(true);
+            await Promise.all([fetchQuizzes(),
+                fetchUsers(),
+                fetchAssignments(),
+                fetchAssignmentsResults(),
+                fetchResults(),
+                fetchEnrollments(),
+                fetchFiles()]);
+            setIsLoading(false);
+        };
+        fetchData();
+        }, []);
+
+    if (isLoading) {
+        return <div>Loading...</div>; // Display loading indicator
+        }
     return (
         <div id="wd-grade-student" className="p-2">
-            <h4>Grades for Student {user ? <strong>{`${user.firstName} ${user.lastName} (${user.loginId})`}</strong> : "User not found"}</h4>
+            <h4>Grades for Student {user ? <strong>{`${user.firstName} ${user.lastName} (${user.universityId})`}</strong> : "User not found"}</h4>
             <hr />
             <button className="btn btn-secondary float-end" onClick={()=>setViewAllAssignments((prev:any)=>!prev)}>{viewAllAssignments ? "Close All" : "View All"}</button>
             <br /><br />
@@ -139,8 +219,7 @@ export default function GradeStudent() {
                         <th className="text-nowrap">Percentage</th>
                         <th className="text-nowrap">Student Submission</th>
 
-        
-
+    
                     </tr>
                     </thead>
 
@@ -216,12 +295,13 @@ export default function GradeStudent() {
                                     <br />
 
                                     <strong className="me-5">Current Grade: {result.score} / {assignment.points} </strong>
-                                    <p style={{display:"inline"}}>Change Grade: <input type="text" onChange={(e)=>setAssignmentGrade(parseInt(e.target.value))} disabled={viewAllAssignments} defaultValue={result.score}/><button className="btn btn-info ms-2" onClick={()=>{updateAssignmentGrade(result._id, assignmentGrade); fetchAssignmentsResults()}} disabled={viewAllAssignments}>Update</button></p>
+                                    <p style={{display:"inline"}}>Change Grade: <input type="text" onChange={(e)=>setAssignmentGrade(parseFloat(e.target.value))} disabled={viewAllAssignments} defaultValue={result.score}/><button className="btn btn-info ms-2" onClick={()=>{updateAssignmentGrade(result._id, assignmentGrade); fetchAssignmentsResults()}} disabled={viewAllAssignments}>Update</button></p>
                                 </div>
 
 
                                 ) 
                             ))}
+
                             </td>
                            </tr>
   
@@ -279,7 +359,7 @@ export default function GradeStudent() {
                   .map((result:any)=> (
                       <div className="text-nowrap" key={result._id}>
                       <strong className="me-5">Current Grade: {result.score} / {quiz.points} </strong>
-                      <p style={{display:"inline"}}>Change Grade: <input type="text" onChange={(e)=>setQuizGrade(parseInt(e.target.value))} disabled={viewAllQuizzes} defaultValue={result.score}/><button className="btn btn-info ms-2" onClick={()=>{updateQuizGrade(result._id, quizGrade)}} disabled={viewAllQuizzes}>Update</button></p>
+                      <p style={{display:"inline"}}>Change Grade: <input type="text" onChange={(e)=>setQuizGrade(parseFloat(e.target.value))} disabled={viewAllQuizzes} defaultValue={result.score}/><button className="btn btn-info ms-2" onClick={()=>{updateQuizGrade(result._id, quizGrade)}} disabled={viewAllQuizzes}>Update</button></p>
    
                       </div>
                   ) 
