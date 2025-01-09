@@ -6,7 +6,7 @@ import * as coursesClient from "../client";
 import * as studentFilesClient from "./studentFileClient";
 import * as filesClient from "../filesClient";
 import {  setFiles } from "../filesReducer";
-
+import Editor from 'react-simple-wysiwyg';
 import * as assignmentsResultsClient from "./assignmentsResultsClient";
 import { addAssignmentResult, deleteAssignmentResult, setAssignmentResults } from "./assignmentResultsReducer";
 import { addStudentFile, deleteStudentFile, setStudentFiles } from "./studentFileReducer";
@@ -227,6 +227,8 @@ const save = async () => {
 
 };
 
+
+
   useEffect(() => {
     // Fetch data and set loading state
     const fetchData = async () => {
@@ -386,10 +388,11 @@ const save = async () => {
                   </div>
                   {uploadText && (
                     <>
-                    <div className="mt-3 ms-3" style={{display:"flex"}}>
-                      <input type="text" className="form-control" placeholder="Add Text" onChange={(e) => setResultSubmission(e.target.value)}/>
-                      <button className="btn btn-secondary ms-2 me-3" onClick={()=>setUploadText(false)}>Cancel</button>
+                    <div className="mt-3 ms-3 me-3">
+
+                    <Editor  value={resultSubmission || ""} onChange={(e) => setResultSubmission(e.target.value)} />
                     </div>
+                    <button className="btn btn-secondary mt-2 ms-3 me-3" onClick={()=>setUploadText(false)}>Cancel</button>
                     
                     </>
                   )}

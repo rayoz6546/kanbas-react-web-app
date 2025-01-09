@@ -15,6 +15,7 @@ import StudentViewButton from "../Quizzes/StudentViewButton";
 import { useViewContext } from "../Quizzes/View";
 import { CgDanger } from "react-icons/cg";
 import { IoMdClose } from "react-icons/io";
+import Editor from 'react-simple-wysiwyg';
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 export default function AssignmentEditor() {
@@ -258,14 +259,8 @@ export default function AssignmentEditor() {
                   <div className="row mb-1 p-1">
                       <label htmlFor="wd-description">Description</label>
                   </div>
-                  <textarea
-                      name="wd-description"
-                      id="wd-description"
-                      className="form-control"
-                      value={assignmentDescription}
-                      onChange={(e) => setAssignmentDescription(e.target.value)}
-                      rows={5}
-                  ></textarea>
+                  <div><Editor value={assignmentDescription || ""} onChange={(e) => setAssignmentDescription(e.target.value)}/></div>
+
               </div>
 
 
