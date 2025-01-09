@@ -277,7 +277,7 @@ export default function GradeStudent() {
                                         {studentFiles &&
                                             studentFiles.map((file: any) =>
                                                 file.itemId === assignment._id && file.userId === uid ? (
-                                                    <p style={{display:"inline"}}>The assignment is
+                                                    <p style={{display:"inline"}}>
                                                     <a
                                                     href={`${REMOTE_SERVER}/api/studentFiles/${file._id}`}
                                                     target="_blank"
