@@ -107,12 +107,10 @@ export default function Profile() {
 
 
           <button onClick={updateProfile} className="btn btn-info w-100 mb-2"> Update </button>
-          <button onClick={signout} className="btn btn-danger w-100 mb-2" id="wd-signout-btn">
+          <button onClick={signout} className="btn btn-dark w-100 mb-2" id="wd-signout-btn">
             Sign out
           </button>
         </div>
       )}
 </div>
-
-
 );}

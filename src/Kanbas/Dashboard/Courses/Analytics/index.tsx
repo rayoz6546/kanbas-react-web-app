@@ -13,6 +13,7 @@ import { setAssignmentResults } from "../Assignments/assignmentResultsReducer";
 import { setAssignments } from "../Assignments/reducer";
 import * as enrollmentsClient from "../../Enrollment/client";
 import { setEnrollments } from "../../Enrollment/reducer";
+import { setUsers } from "../../../Account/usersReducer";
 
 
 type BoxplotData = {
@@ -96,7 +97,7 @@ function BoxplotCanvas({ boxplotData }: { boxplotData: BoxplotData }) {
 export default function Analytics() {
     const { cid } = useParams();
     const navigate = useNavigate()
-    const [users, setUsers] = useState<any[]>([]); 
+    const { users } = useSelector((state:any) => state.usersReducer)
     const {quizzes} = useSelector((state:any) => state.quizzesReducer)
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
     const {assignmentResults} = useSelector((state:any)=> state.assignmentsResultsReducer)
@@ -125,8 +126,8 @@ export default function Analytics() {
         };
     const fetchUsers = async () => {
         const users = await usersClient.findUsersForCourse(cid as string)
-        setUsers(users)
-        // dispatch(setQuizzes(quizzes));
+
+        dispatch(setUsers(users));
 
         };
 
@@ -179,8 +180,9 @@ export default function Analytics() {
     };
 
     const getBoxplotDataQuiz = (quizId: string): BoxplotData | null => {
+        const facultyUser = users.find((u: any) => u.role === "FACULTY")
         const scores =results
-            .filter((r: any) => r.quizId === quizId)
+            .filter((r: any) => r.quizId === quizId && r.userId !== facultyUser._id)
             .map((r: any) => r.score)
             .sort((a: number, b: number) => a - b);
     

@@ -6,7 +6,11 @@ import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import store from "./Kanbas/store";
 import { Provider } from "react-redux";
 
+
+
 function App() {
+
+  
   return (
     <HashRouter>
       <Provider store={store}>

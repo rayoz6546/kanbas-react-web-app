@@ -100,7 +100,7 @@ export default function TakeQuiz() {
             await resultsClient.updateResults(updatedResult);
             dispatch(addResults(updatedResult));
         }
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizResults`)
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/PreviewResults`)
 
     }
 
