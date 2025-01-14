@@ -140,7 +140,9 @@ export default function Grades() {
 
                 <tbody>
 
-                    {assignmentResults && assignmentResults.map((r:any)=>(
+                    {assignmentResults && assignmentResults
+                    .filter((a:any)=>a.courseId===cid)
+                    .map((r:any)=>(
                         <tr key={r.assignmentId}>
                             <td>{assignments && assignments.find((a:any)=>a._id === r.assignmentId && a.course === r.courseId)?.title}</td>
                             <td>{assignments && assignments.find((a:any)=>a._id === r.assignmentId)?.due_date}</td>
