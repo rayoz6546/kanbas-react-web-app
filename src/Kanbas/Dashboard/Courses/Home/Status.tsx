@@ -107,7 +107,6 @@ export default function CourseStatus({isStudentView}:{isStudentView:Boolean}) {
 ) : 
 <>
 
-
         <button className="btn btn-lg btn-secondary w-100 mt-1 text-start" onClick={()=>navigate(`/Kanbas/Courses/${cid}/Announcements`)}> 
         <TfiAnnouncement className="me-2 fs-5" /> Announcements ({announcements.length})</button>
 
