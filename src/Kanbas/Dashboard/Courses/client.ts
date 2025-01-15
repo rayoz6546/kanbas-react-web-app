@@ -83,5 +83,16 @@ export const createQuizForCourse = async (courseId: string, quiz: any) => {
 };
 
 
+export const findAnnouncementsForCourse = async (courseId: string) => {
+  const response = await axios.get(`${COURSES_API}/${courseId}/announcements`);
+  return response.data;
+};
 
+export const createAnnouncementForCourse = async (courseId: string, announcement: any) => {
+  const response = await axios.post(
+    `${COURSES_API}/${courseId}/announcements`,
+    announcement
+  );
+  return response.data;
+};
 

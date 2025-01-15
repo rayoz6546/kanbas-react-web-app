@@ -30,6 +30,8 @@ import StudentQuizResults from "./Grades/studentQuizResults";
 import Analytics from "./Analytics";
 import { setCourses } from "./reducer";
 import * as courseClient from "../Courses/client";
+import Announcements from "./Announcements";
+import AnnouncementEditor from "./Announcements/editor";
 export default function Courses() {
   const { cid } = useParams();
   const {courses} = useSelector((state: any) => state.coursesReducer);
@@ -129,6 +131,9 @@ const toggleIcons = (Id: string) => {
               <Route path="Grades/:uid/:qid" element={<StudentQuizResults />} />
               <Route path="People" element={<PeopleTable />} />
               <Route path="Analytics" element={<Analytics />} />
+              <Route path="Announcements" element={<Announcements />} />
+              <Route path="Announcements/:anid" element={<AnnouncementEditor />} />
+              <Route path="Notifications" element={<Announcements />} />
               
             </Routes>
           </ViewProvider>

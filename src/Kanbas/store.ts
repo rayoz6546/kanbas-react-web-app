@@ -11,6 +11,7 @@ import filesReducer from "./Dashboard/Courses/filesReducer";
 import assignmentsResultsReducer from "./Dashboard/Courses/Assignments/assignmentResultsReducer";
 import studentFilesReducer from "./Dashboard/Courses/Assignments/studentFileReducer";
 import usersReducer from "./Account/usersReducer";
+import announcementsReducer from "./Dashboard/Courses/Announcements/reducer"
 const store = configureStore({
 
   reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
     assignmentsResultsReducer,
     studentFilesReducer,
     usersReducer,
+    announcementsReducer,
   },
 });
 export default store;
