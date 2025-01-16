@@ -106,7 +106,7 @@ export default function Grades() {
                         {users && users.map((user:any)=>(
                             <tr key={user._id}>
                                 <>
-                                {user.role === "STUDENT" &&
+                                {user && user.role && user.role === "STUDENT" &&
                                <>
                                 <td>{user.firstName} {user.lastName}</td>
                                 <td>{user.universityId}</td>
