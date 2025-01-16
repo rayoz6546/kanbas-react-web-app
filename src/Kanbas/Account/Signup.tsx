@@ -74,8 +74,8 @@ export default function Signup() {
       {/* <div id="required-field"><input value={user.universityId} onChange={(e) => setUser({ ...user, universityId: e.target.value })}
              className="wd-uniId form-control mb-2" placeholder={role==="STUDENT" ? "Student ID" : "Faculty ID"} /><FaStarOfLife className="required-star text-danger"/></div> */}
 
-    <input  id="required-field" value={user.username} onChange={(e) => setUser({ ...user, username: e.target.value })}
-             className="wd-username form-control mb-2" placeholder="Username" />
+  <div id="required-field"><input value={user.username} onChange={(e) => setUser({ ...user, username: e.target.value })}
+             className="wd-username form-control mb-2" placeholder="Username" /><FaStarOfLife className="required-star text-danger"/></div>
 
       <div id="required-field"><input value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} type="password"
              className="wd-password form-control mb-2" placeholder="Password" /><FaStarOfLife className="required-star text-danger"/></div>
