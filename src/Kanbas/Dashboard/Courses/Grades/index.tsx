@@ -80,7 +80,7 @@ export default function Grades() {
             setIsLoading(false);
         };
         fetchData();
-        }, []);
+        }, [dispatch, cid, currentUser]);
 
     if (isLoading) {
         return <div>Loading...</div>; 
@@ -106,7 +106,7 @@ export default function Grades() {
                         {users && users.map((user:any)=>(
                             <tr key={user._id}>
                                 <>
-                                {user && user.role && user.role === "STUDENT" &&
+                                {user.role === "STUDENT" &&
                                <>
                                 <td>{user.firstName} {user.lastName}</td>
                                 <td>{user.universityId}</td>
