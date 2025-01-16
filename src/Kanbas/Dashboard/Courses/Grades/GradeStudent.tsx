@@ -23,7 +23,7 @@ export default function GradeStudent() {
  
     const {assignmentResults} = useSelector((state:any)=> state.assignmentsResultsReducer)
     const { users } = useSelector((state:any)=> state.usersReducer)
-    const user = users && uid ? users.find((u:any)=> u._id===uid) : null;
+    const user = users.find((u:any)=> u._id===uid);
     const {enrollments} = useSelector((state:any)=>state.enrollmentsReducer)
 
     const fetchEnrollments = async () => {
@@ -201,6 +201,9 @@ export default function GradeStudent() {
     if (isLoading) {
         return <div>Loading...</div>; // Display loading indicator
         }
+    if (!user) { 
+        return <div>Loading...</div>
+    }
     return (
         <div id="wd-grade-student" className="p-2">
             <h4>Grades for Student {user ? <strong>{`${user.firstName} ${user.lastName} (${user.universityId})`}</strong> : "User not found"}</h4>
