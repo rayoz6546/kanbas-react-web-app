@@ -283,7 +283,7 @@ export default function TakeQuiz() {
     const startTimer = (timeLimit: number) => {
         setRemainingTime(timeLimit * 60);
         setIsTimeUp(false); 
-    
+
         const timer = setInterval(() => {
             setRemainingTime((prevTime) => {
                 if (prevTime === 1) {
@@ -291,27 +291,24 @@ export default function TakeQuiz() {
                     setIsTimeUp(true); 
                     return 0; 
                 }
-                return prevTime! - 1; // Decrement by 1 second
+                return prevTime! - 0.5;
             });
-        }, 1000); // Execute every 1 second
-    
-        // Cleanup the timer on unmount
+        }, 1000);
         return () => clearInterval(timer);
     };
-    
-
-        
 
     useEffect(() => {
         const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course == cid);
         if (quiz && quiz.time_limit) {
             setQuizStartTime(Date.now());
-            const cleanupTimer = startTimer(quiz.time_limit);
-    
-            return cleanupTimer; // Ensure cleanup on component unmount
+            startTimer(quiz.time_limit);
         }
-    }, [cid, qid, quizzes]);
-    
+        if (isTimeUp) {
+
+            
+            submit();
+        }
+    }, [cid, qid, quizzes, isTimeUp, navigate]);
 
     const formatTime = (time: number) => {
         const hours = Math.floor(time / 3600); 
