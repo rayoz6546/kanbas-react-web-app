@@ -104,6 +104,8 @@ export default function Grades() {
 
                     <tbody>
                         {users && users.map((user:any)=>(
+                            <>
+                            {user && (
                             <tr key={user._id}>
                                 <>
                                 {user.role === "STUDENT" &&
@@ -116,6 +118,8 @@ export default function Grades() {
                                 </>
                                 }</>
                             </tr>
+                            )}
+                            </>
                         ))}
                     </tbody>
                 </table>
