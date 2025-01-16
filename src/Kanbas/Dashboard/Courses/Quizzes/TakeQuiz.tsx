@@ -66,7 +66,7 @@ export default function TakeQuiz() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const questionRefs = useRef<any[]>([]);
 
-    const [remainingTime, setRemainingTime] = useState<number | null>(null); 
+    const [remainingTime, setRemainingTime] = useState<number>(0);
     const [isTimeUp, setIsTimeUp] = useState(false); 
     const [quizStartTime, setQuizStartTime] = useState<number | null>(null); 
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
@@ -281,21 +281,40 @@ export default function TakeQuiz() {
     };
 
     const startTimer = (timeLimit: number) => {
-        setRemainingTime(timeLimit * 60);
-        setIsTimeUp(false); 
-
+        const endTime = Date.now() + timeLimit * 60 * 1000; // Calculate end time in milliseconds
+        setIsTimeUp(false);
+    
         const timer = setInterval(() => {
-            setRemainingTime((prevTime) => {
-                if (prevTime === 0.5) {
-                    clearInterval(timer); 
-                    setIsTimeUp(true); 
-                    return 0; 
-                }
-                return prevTime! - 0.5;
-            });
+            const currentTime = Date.now();
+            const timeLeft = Math.max(0, Math.floor((endTime - currentTime) / 1000)); // Calculate remaining time in seconds
+    
+            setRemainingTime(timeLeft);
+    
+            if (timeLeft === 0) {
+                clearInterval(timer); // Stop timer when it reaches 0
+                setIsTimeUp(true);
+            }
         }, 1000);
-        return () => clearInterval(timer);
+    
+        return () => clearInterval(timer); // Cleanup function to clear the interval
     };
+    
+    // const startTimer = (timeLimit: number) => {
+    //     setRemainingTime(timeLimit * 60);
+    //     setIsTimeUp(false); 
+
+    //     const timer = setInterval(() => {
+    //         setRemainingTime((prevTime) => {
+    //             if (prevTime === 0.5) {
+    //                 clearInterval(timer); 
+    //                 setIsTimeUp(true); 
+    //                 return 0; 
+    //             }
+    //             return prevTime! - 0.5;
+    //         });
+    //     }, 1000);
+    //     return () => clearInterval(timer);
+    // };
 
     useEffect(() => {
         const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course == cid);
