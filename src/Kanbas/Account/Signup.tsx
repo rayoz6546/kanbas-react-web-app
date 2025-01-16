@@ -1,12 +1,13 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as client from "./client";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "./reducer";
 import { RiErrorWarningLine } from "react-icons/ri";
 import { FaStarOfLife } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { setUsers } from "./usersReducer";
 
 export default function Signup() {
   const [user, setUser] = useState<any>({});
@@ -15,6 +16,14 @@ export default function Signup() {
   const [role, setRole] = useState("STUDENT")
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+  const { users } = useSelector((state:any)=> state.usersReducer)
+   const fetchUsers = async () => {
+     const users = await client.findAllUsers()
+  
+     dispatch(setUsers(users))
+  };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () =>
@@ -27,7 +36,8 @@ export default function Signup() {
     setError("");
     if (confirmPass === user.password) { 
     try {
-      const userWithRole = { ...user, role };
+      const newIndex = users.length + 1;
+      const userWithRole = { ...user, role, universityId: `2024${newIndex}`};
       const currentUser = await client.signup(userWithRole);
       dispatch(setCurrentUser(currentUser));
       navigate("/Kanbas/Account/Profile");
@@ -42,6 +52,14 @@ export default function Signup() {
   }
 
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+  
+  if (!users)  {
+    return (<div>no enrollments</div>)
+  }
   return (
     <div className="wd-signup-screen p-5" style={{width:"500px",position: "relative"}}>
       <h3>Sign up</h3>
