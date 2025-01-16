@@ -83,7 +83,7 @@ export default function Signup() {
       <div id="required-field"><input value={user.confirmPass} onChange={(e) => setConfirmPass(e.target.value)} type="password" 
              className="wd-password form-control mb-2" placeholder="Confirm Password" /><FaStarOfLife className="required-star text-danger"/></div>
 
-      {((!user.password || !user.password ) && submit ? <p className="text-danger" style={{ fontSize: "14px", marginBottom: "10px" }}><RiErrorWarningLine className="fs-5 mb-1 text-danger me-2"/> Please enter username and password</p> : null)}
+      {((!user.username || !user.password ) && submit ? <p className="text-danger" style={{ fontSize: "14px", marginBottom: "10px" }}><RiErrorWarningLine className="fs-5 mb-1 text-danger me-2"/> Please enter username and password</p> : null)}
       {(confirmPass!==user.password && submit ? <p className="text-danger" style={{ fontSize: "14px", marginBottom: "10px" }}><RiErrorWarningLine className="fs-5 mb-1 text-danger me-2"/> Password does not match</p> : null)}
       {error && (
         <p className="text-danger" style={{ fontSize: "14px", marginBottom: "10px" }}>
