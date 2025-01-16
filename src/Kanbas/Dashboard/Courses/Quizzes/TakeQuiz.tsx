@@ -291,7 +291,7 @@ export default function TakeQuiz() {
                     setIsTimeUp(true); 
                     return 0; 
                 }
-                return prevTime! - 0.5;
+                return prevTime! - 0.1;
             });
         }, 1000);
         return () => clearInterval(timer);
@@ -347,7 +347,7 @@ export default function TakeQuiz() {
 
 
             <div className="row mb-2">
-            <h4><strong>Quiz Instructions</strong></h4>
+            <h4><strong>Quiz Instructions hahahaha</strong></h4>
             </div>
             <hr />
 
