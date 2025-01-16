@@ -66,9 +66,9 @@ export default function TakeQuiz() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const questionRefs = useRef<any[]>([]);
 
-    const [remainingTime, setRemainingTime] = useState<number>(0); 
+    const [remainingTime, setRemainingTime] = useState<number>(0);
     const [isTimeUp, setIsTimeUp] = useState(false); 
-    const [quizStartTime, setQuizStartTime] = useState<number | null>(null); 
+    const [quizStartTime, setQuizStartTime] = useState<number>(0); 
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
     const fetchResults = async () => {
@@ -279,64 +279,41 @@ export default function TakeQuiz() {
     
         return "00:00:00";  
     };
-    let timer: NodeJS.Timeout; // Declare the timer
 
     const startTimer = (timeLimit: number) => {
-        setRemainingTime(timeLimit * 60); // Initialize remaining time in seconds
-        setIsTimeUp(false);
-    
-        // Clear any existing timer to avoid multiple intervals
-        clearInterval(timer);
-    
-        // Start the timer
-        timer = setInterval(() => {
-            setRemainingTime((prevTime) => {
-                if (prevTime <= 1) { // Stop timer when time is up
-                    clearInterval(timer);
-                    setIsTimeUp(true);
-                    return 0;
-                }
-                return prevTime - 1; // Decrement by 1 second
-            });
-        }, 1000); // Execute every 1 second
-    };
-    
-    // Ensure cleanup on unmount
-    useEffect(() => {
-        return () => clearInterval(timer);
-    }, []);
-    
-    // const startTimer = (timeLimit: number) => {
-    //     setRemainingTime(timeLimit * 60);
-    //     setIsTimeUp(false); 
+        setRemainingTime(timeLimit * 60);
+        setIsTimeUp(false); 
 
-    //     const timer = setInterval(() => {
-    //         setRemainingTime((prevTime) => {
-    //             if (prevTime === 1) {
-    //                 clearInterval(timer); 
-    //                 setIsTimeUp(true); 
-    //                 return 0; 
-    //             }
-    //             return prevTime! - 1;
-    //         });
-    //     }, 100);
-    //     return () => clearInterval(timer);
-    // };
+        const timer = setInterval(() => {
+            setRemainingTime((prevTime) => {
+                if (prevTime === 1) {
+                    clearInterval(timer); 
+                    setIsTimeUp(true); 
+                    return 0; 
+                }
+                return prevTime! - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    };
+
     useEffect(() => {
-        const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course === cid);
+        const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course == cid);
         if (quiz && quiz.time_limit) {
             setQuizStartTime(Date.now());
-            startTimer(quiz.time_limit); // Pass time limit in minutes
+            startTimer(quiz.time_limit);
         }
-    
-        // Cleanup on unmount
-        return () => clearInterval(timer);
-    }, [cid, qid, quizzes]);
-    
+        if (isTimeUp) {
+
+            
+            submit();
+        }
+    }, [cid, qid, quizzes, isTimeUp, navigate]);
+
     const formatTime = (time: number) => {
-        const hours = Math.floor(time / 3600);
-        const minutes = Math.floor((time % 3600) / 60);
-        const seconds = time % 60;
+        const hours = Math.floor(time / 3600); 
+        const minutes = Math.floor((time % 3600) / 60);  
+        const seconds = time % 60;  
     
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
