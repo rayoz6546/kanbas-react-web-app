@@ -293,7 +293,7 @@ export default function TakeQuiz() {
                 }
                 return prevTime! - 1;
             });
-        }, 2000);
+        }, 100);
         return () => clearInterval(timer);
     };
 
