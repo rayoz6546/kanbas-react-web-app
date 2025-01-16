@@ -37,7 +37,7 @@ export default function Signup() {
     if (confirmPass === user.password) { 
     try {
       const newIndex = users.length + 1;
-      const userWithRole = { ...user, role, universityId: `2024${newIndex}`};
+      const userWithRole = { ...user, role, universityId: `${new Date().getFullYear()}${newIndex}`};
       const currentUser = await client.signup(userWithRole);
       dispatch(setCurrentUser(currentUser));
       navigate("/Kanbas/Account/Profile");
