@@ -66,7 +66,7 @@ export default function TakeQuiz() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const questionRefs = useRef<any[]>([]);
 
-    const [remainingTime, setRemainingTime] = useState<number | null>(null); 
+    const [remainingTime, setRemainingTime] = useState<number>(0); 
     const [isTimeUp, setIsTimeUp] = useState(false); 
     const [quizStartTime, setQuizStartTime] = useState<number | null>(null); 
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
@@ -279,21 +279,21 @@ export default function TakeQuiz() {
     
         return "00:00:00";  
     };
-    let timer: NodeJS.Timeout; // Declare the timer outside to ensure a single instance
+    let timer: NodeJS.Timeout; // Declare the timer
 
     const startTimer = (timeLimit: number) => {
         setRemainingTime(timeLimit * 60); // Initialize remaining time in seconds
-        setIsTimeUp(false); 
+        setIsTimeUp(false);
     
-        // Clear any existing timer before starting a new one
+        // Clear any existing timer to avoid multiple intervals
         clearInterval(timer);
     
         // Start the timer
         timer = setInterval(() => {
-            setRemainingTime((prevTime:any) => {
-                if (prevTime === 1) {
-                    clearInterval(timer); // Stop the timer when it reaches 0
-                    setIsTimeUp(true); // Trigger time-up state
+            setRemainingTime((prevTime) => {
+                if (prevTime <= 1) { // Stop timer when time is up
+                    clearInterval(timer);
+                    setIsTimeUp(true);
                     return 0;
                 }
                 return prevTime - 1; // Decrement by 1 second
@@ -305,6 +305,7 @@ export default function TakeQuiz() {
     useEffect(() => {
         return () => clearInterval(timer);
     }, []);
+    
     // const startTimer = (timeLimit: number) => {
     //     setRemainingTime(timeLimit * 60);
     //     setIsTimeUp(false); 
