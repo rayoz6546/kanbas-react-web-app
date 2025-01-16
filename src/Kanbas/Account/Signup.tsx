@@ -34,7 +34,7 @@ export default function Signup() {
 
   const signup = async () => {
     setError("");
-    if (confirmPass === user.password) { 
+    if (confirmPass === user.password && user.username) { 
     try {
       const newIndex = users.length + 1;
       const userWithRole = { ...user, role, universityId: `${new Date().getFullYear()}${newIndex}`};
