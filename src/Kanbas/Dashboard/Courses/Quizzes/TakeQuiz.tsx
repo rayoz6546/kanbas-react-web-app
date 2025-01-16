@@ -279,23 +279,48 @@ export default function TakeQuiz() {
     
         return "00:00:00";  
     };
+    let timer: NodeJS.Timeout; // Declare the timer outside to ensure a single instance
 
     const startTimer = (timeLimit: number) => {
-        setRemainingTime(timeLimit * 60);
+        setRemainingTime(timeLimit * 60); // Initialize remaining time in seconds
         setIsTimeUp(false); 
-
-        const timer = setInterval(() => {
-            setRemainingTime((prevTime) => {
+    
+        // Clear any existing timer before starting a new one
+        clearInterval(timer);
+    
+        // Start the timer
+        timer = setInterval(() => {
+            setRemainingTime((prevTime:any) => {
                 if (prevTime === 1) {
-                    clearInterval(timer); 
-                    setIsTimeUp(true); 
-                    return 0; 
+                    clearInterval(timer); // Stop the timer when it reaches 0
+                    setIsTimeUp(true); // Trigger time-up state
+                    return 0;
                 }
-                return prevTime! - 1;
+                return prevTime - 1; // Decrement by 1 second
             });
-        }, 100);
-        return () => clearInterval(timer);
+        }, 1000); // Execute every 1 second
     };
+    
+    // Ensure cleanup on unmount
+    useEffect(() => {
+        return () => clearInterval(timer);
+    }, []);
+    // const startTimer = (timeLimit: number) => {
+    //     setRemainingTime(timeLimit * 60);
+    //     setIsTimeUp(false); 
+
+    //     const timer = setInterval(() => {
+    //         setRemainingTime((prevTime) => {
+    //             if (prevTime === 1) {
+    //                 clearInterval(timer); 
+    //                 setIsTimeUp(true); 
+    //                 return 0; 
+    //             }
+    //             return prevTime! - 1;
+    //         });
+    //     }, 100);
+    //     return () => clearInterval(timer);
+    // };
 
     useEffect(() => {
         const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course == cid);
