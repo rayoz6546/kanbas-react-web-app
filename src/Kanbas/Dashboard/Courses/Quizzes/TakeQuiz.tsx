@@ -291,9 +291,9 @@ export default function TakeQuiz() {
                     setIsTimeUp(true); 
                     return 0; 
                 }
-                return prevTime! - 0.8;
+                return prevTime! - 1;
             });
-        }, 1000);
+        }, 1100);
         return () => clearInterval(timer);
     };
 
