@@ -68,7 +68,7 @@ export default function TakeQuiz() {
 
     const [remainingTime, setRemainingTime] = useState<number>(0);
     const [isTimeUp, setIsTimeUp] = useState(false); 
-    const [quizStartTime, setQuizStartTime] = useState<number | null>(null); 
+    const [quizStartTime, setQuizStartTime] = useState<number>(0);
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
     const fetchResults = async () => {
