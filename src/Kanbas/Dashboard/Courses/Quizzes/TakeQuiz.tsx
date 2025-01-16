@@ -322,24 +322,21 @@ export default function TakeQuiz() {
     //     }, 100);
     //     return () => clearInterval(timer);
     // };
-
     useEffect(() => {
-        const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course == cid);
+        const quiz = quizzes.find((quiz: any) => quiz._id === qid && quiz.course === cid);
         if (quiz && quiz.time_limit) {
             setQuizStartTime(Date.now());
-            startTimer(quiz.time_limit);
+            startTimer(quiz.time_limit); // Pass time limit in minutes
         }
-        if (isTimeUp) {
-
-            
-            submit();
-        }
-    }, [cid, qid, quizzes, isTimeUp, navigate]);
-
+    
+        // Cleanup on unmount
+        return () => clearInterval(timer);
+    }, [cid, qid, quizzes]);
+    
     const formatTime = (time: number) => {
-        const hours = Math.floor(time / 3600); 
-        const minutes = Math.floor((time % 3600) / 60);  
-        const seconds = time % 60;  
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor((time % 3600) / 60);
+        const seconds = time % 60;
     
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
