@@ -23,7 +23,7 @@ export default function GradeStudent() {
  
     const {assignmentResults} = useSelector((state:any)=> state.assignmentsResultsReducer)
     const { users } = useSelector((state:any)=> state.usersReducer)
-    const user = Array.isArray(users) ? users.find((u: any) => u._id === uid) : null;
+    const user = users && uid ? users.find((u:any)=> u._id===uid) : null;
     const {enrollments} = useSelector((state:any)=>state.enrollmentsReducer)
 
     const fetchEnrollments = async () => {
