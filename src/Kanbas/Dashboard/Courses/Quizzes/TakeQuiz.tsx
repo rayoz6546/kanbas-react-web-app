@@ -286,12 +286,12 @@ export default function TakeQuiz() {
 
         const timer = setInterval(() => {
             setRemainingTime((prevTime) => {
-                if (prevTime === 0.5) {
+                if (prevTime === 0.1) {
                     clearInterval(timer); 
                     setIsTimeUp(true); 
                     return 0; 
                 }
-                return prevTime! - 0.5;
+                return prevTime! - 0.1;
             });
         }, 1000);
         return () => clearInterval(timer);
