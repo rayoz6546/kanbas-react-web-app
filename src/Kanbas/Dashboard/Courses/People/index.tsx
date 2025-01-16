@@ -29,8 +29,9 @@ const [isLoading, setIsLoading] = useState(true);
 
   const { enrollments } = useSelector((state:any)=> state.enrollmentsReducer)
   const enrolledInCourse = enrollments.filter((e:any)=> e.course === cid)
-  const enrolledUsers = users.filter((user:any)=>
-  enrolledInCourse.some((e:any)=> e.user === user._id))
+  const enrolledUsers = (users || []).filter((user: any) =>
+    (enrolledInCourse || []).some((e: any) => e.user === user._id)
+  );
 
   const dispatch = useDispatch()
 
