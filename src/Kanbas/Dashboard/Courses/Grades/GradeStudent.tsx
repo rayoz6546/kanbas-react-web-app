@@ -23,7 +23,7 @@ export default function GradeStudent() {
  
     const {assignmentResults} = useSelector((state:any)=> state.assignmentsResultsReducer)
     const { users } = useSelector((state:any)=> state.usersReducer)
-    const user = users.find((u:any)=> u._id && u._id===uid);
+    const user = users?.find((u:any)=> u._id===uid);
     const {enrollments} = useSelector((state:any)=>state.enrollmentsReducer)
 
     const fetchEnrollments = async () => {
@@ -57,7 +57,6 @@ export default function GradeStudent() {
     const fetchUsers = async () => {
         const users = await usersClient.findUsersForCourse(cid as string)
         dispatch(setUsers(users))
-
 
         };
 
@@ -183,7 +182,6 @@ export default function GradeStudent() {
 
 
     useEffect(() => {
-        // Fetch data and set loading state
         const fetchData = async () => {
             setIsLoading(true);
             await Promise.all([fetchQuizzes(),
@@ -199,7 +197,7 @@ export default function GradeStudent() {
         }, [cid, uid]);
 
     if (isLoading) {
-        return <div>Loading...</div>; // Display loading indicator
+        return <div>Loading...</div>; 
         }
     if (!user) { 
         return <div>Loading...</div>
