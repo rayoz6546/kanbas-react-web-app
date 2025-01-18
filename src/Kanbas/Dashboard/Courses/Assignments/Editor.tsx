@@ -28,7 +28,7 @@ export default function AssignmentEditor() {
   const [isLoading, setIsLoading] = useState(true);
 
 
-  const [assignmentName, setAssignmentName] = useState(assignment ? assignment.title : "");
+  const [assignmentName, setAssignmentName] = useState(assignment ? assignment.title : "New Assignment");
   const [assignmentDescription, setAssignmentDescription] = useState(assignment ? assignment.description : "");
   const [assignmentPoints, setAssignmentPoints] = useState(assignment ? assignment.points : null);
   const [assignmentDue, setAssignmentDue] = useState(assignment ? assignment.due_date : "");
