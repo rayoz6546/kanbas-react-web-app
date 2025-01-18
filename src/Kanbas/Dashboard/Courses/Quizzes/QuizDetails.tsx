@@ -103,15 +103,15 @@ export default function QuizDetails() {
                             </div> :   <div className="row-auto d-flex justify-content-center">
                                 <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
                                 onClick={() =>{setEnderCode((prev:any)=>!prev)}}>
-                                    Take Quiz</button>
+                                    Take Quiz</button><br /><br />
 
                                 {enterCode && (
 
                                     <div className="row-auto d-flex justify-content-center">
                                         <input type="text" className="form-control" placeholder="Enter Access Code" onChange={(e)=> setCode(e.target.value)}/>
-                                    <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
+                                    <button id="wd-takequiz-btn" className="btn btn-lg btn-primary fs-6 rounded-1 me-1"
                                     onClick={() =>{code === quiz.access_code && navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/TakeQuiz`)}}>
-                                        Take Quiz</button></div>
+                                        Go</button></div>
                                 )}
                             </div> 
                         )}
