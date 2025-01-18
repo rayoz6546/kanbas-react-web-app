@@ -108,7 +108,7 @@ export default function QuizDetails() {
                                 {enterCode && (
 
                                     <div className="row-auto d-flex justify-content-center">
-                                        <input type="text" className="form-control me-2" placeholder="Enter Access Code" onChange={(e)=> setCode(e.target.value)}/>
+                                        <input type="text" className="form-control me-1" placeholder="Enter Access Code" onChange={(e)=> setCode(e.target.value)}/>
                                     <button id="wd-takequiz-btn" className="btn btn-lg btn-primary fs-6 rounded-1 me-1"
                                     onClick={() =>{code === quiz.access_code && navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/TakeQuiz`)}}>
                                         Go</button></div>
