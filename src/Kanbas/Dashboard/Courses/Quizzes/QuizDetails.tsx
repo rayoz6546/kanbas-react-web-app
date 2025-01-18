@@ -30,7 +30,8 @@ export default function QuizDetails() {
     const {results} = useSelector((state:any)=> state.resultsReducer)
     const result = results.find((res:any)=>res.quizId === qid && res.courseId=== cid && res.userId === currentUser._id)
 
-
+    const [code, setCode] = useState("")
+    const [enterCode, setEnderCode] = useState(false)
 
     const fetchResults = async () => {
         const results = await resultsClient.fetchResults(qid as string, currentUser._id)
@@ -94,12 +95,26 @@ export default function QuizDetails() {
                     {(quiz.availability==="Available" || quiz.availability==="") && (
                         <>
                         
-                            {(result?.attempt==null )&& (
+                            {(result?.attempt==null )&& (quiz.access_code==="" ? 
                                 <div className="row-auto d-flex justify-content-center">
                                 <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
                                 onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/TakeQuiz`);}}>
                                     Take Quiz</button>
-                            </div>)}
+                            </div> :   <div className="row-auto d-flex justify-content-center">
+                                <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
+                                onClick={() =>{setEnderCode((prev:any)=>!prev)}}>
+                                    Take Quiz</button>
+
+                                {enterCode && (
+
+                                    <div className="row-auto d-flex justify-content-center">
+                                        <input type="text" className="form-control" placeholder="Enter Access Code" onChange={(e)=> setCode(e.target.value)}/>
+                                    <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
+                                    onClick={() =>{code === quiz.access_code && navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/TakeQuiz`)}}>
+                                        Take Quiz</button></div>
+                                )}
+                            </div> 
+                        )}
 
                             {result?.attempt>=quiz.number_attempts && (
                                 <div className="row-auto d-flex justify-content-center">
